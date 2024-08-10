@@ -2,6 +2,7 @@
 
 include '../header.php' ;
 
+
 ?>
 <div id="page-wrapper">
 
@@ -12,12 +13,11 @@ include '../header.php' ;
 
         <h1 class="page-header">
             Welcome To Admin
-            <small> Add Category</small>
+            <small> Edit Post</small>
         </h1>
-        <?php
-        editCategory();
-
-      ?>
+<?php
+        editPost();
+        ?>
         <!-- /.container-fluid -->
 
     </div>

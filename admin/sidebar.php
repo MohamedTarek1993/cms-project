@@ -12,10 +12,10 @@
                 <i class="fa fa-fw fa-caret-down"></i></a>
             <ul id="demo" class="collapse">
                 <li>
-                    <a href="#">All Posts</a>
+                    <a href="<?php echo BASE_URL; ?>/admin/posts/show.php">All Posts</a>
                 </li>
                 <li>
-                    <a href="#">Create Post</a>
+                    <a href="<?php echo BASE_URL; ?>/admin/posts/add.php">Create Post</a>
                 </li>
             </ul>
         </li>

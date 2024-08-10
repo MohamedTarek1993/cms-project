@@ -1,23 +1,7 @@
 <?php
 
 include '../header.php' ;
-
-if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
-    $cat_title = $_POST['cat_title'];
-    if($cat_title == "" || empty($cat_title)){
-        echo "<p class='text-danger'>Field must not be empty</p>";
-    }
-    else{
-   
-    $query = "INSERT INTO category(cat_title) VALUES('$cat_title')";
-    $result = mysqli_query($connection , $query);
-
-    if(!$result){
-        die('query failed' . mysqli_error($connection));
-    }
-   
-}
-}
+addCategory();
 ?>
 <div id="page-wrapper">
 

@@ -2,7 +2,7 @@
 
 include 'includes/db.php';
 include 'functions.php';
-  define('BASE_URL', '/cms-system');
+  define('BASE_URL', '/cms-project');
 ob_start();
 ?>
 
