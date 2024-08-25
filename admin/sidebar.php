@@ -8,7 +8,7 @@
         </li>
 
         <li>
-            <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-arrows-v"></i> Posts
+            <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-book"></i> Posts
                 <i class="fa fa-fw fa-caret-down"></i></a>
             <ul id="demo" class="collapse">
                 <li>
@@ -32,16 +32,29 @@
             </ul>
         </li>
 
+        <li>
+            <a href="javascript:;" data-toggle="collapse" data-target="#Comments"><i class="fa fa-fw fa-comment"></i>
+                Comments <i class="fa fa-fw fa-caret-down"></i></a>
+            <ul id="Comments" class="collapse">
+                <li>
+                    <a href="<?php echo BASE_URL; ?>/admin/comments/show.php">All Comments</a>
+                </li>
+                <li>
+                    <a href="<?php echo BASE_URL; ?>/admin/comments/add.php">Create Comments</a>
+                </li>
+            </ul>
+        </li>
+
 
         <li>
-            <a href="javascript:;" data-toggle="collapse" data-target="#user"><i class="fa fa-fw fa-arrows-v"></i> Users
+            <a href="javascript:;" data-toggle="collapse" data-target="#user"><i class="fa fa-fw fa-users"></i> Users
                 <i class="fa fa-fw fa-caret-down"></i></a>
             <ul id="user" class="collapse">
                 <li>
-                    <a href="#">All Users</a>
+                    <a href="<?php echo BASE_URL; ?>/admin/users/show.php">All Users</a>
                 </li>
                 <li>
-                    <a href="#">Create User</a>
+                    <a href="<?php echo BASE_URL; ?>/admin/users/add.php">Create User</a>
                 </li>
             </ul>
         </li>

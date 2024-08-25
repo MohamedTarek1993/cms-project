@@ -18,7 +18,7 @@
     <?=  $all_posts['post_content'] ?>
 
 </p>
-<a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+<a class="btn btn-primary" href="<?php echo 'post.php?post_id=' . $all_posts['post_id'] ; ?>">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
 <hr>
 
 <?php endwhile; ?>

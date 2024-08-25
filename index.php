@@ -39,8 +39,6 @@ include('includes/header.php') ;
     <!-- /.row -->
 
     <hr>
-
-   
 </div>
  <!-- Footer -->
  <?php include 'includes/footer.php'; ?>
