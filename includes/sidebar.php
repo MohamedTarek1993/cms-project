@@ -14,6 +14,15 @@
 
     <!-- Blog Categories Well -->
 
+     <!-- login Well -->
+     <div class="well">
+        <h4>Lohin Search</h4>
+       <?php include 'template-parts/login.php'; ?>
+        <!-- /.input-group -->
+    </div>
+
+    <!--login Well -->
+
     <?php include('categories.php'); ?>
 
     <!-- Side Widget Well -->
