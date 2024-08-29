@@ -13,10 +13,14 @@ include '../header.php' ;
 
         <h1 class="page-header">
             Welcome To Admin
-            <small> Edit Post</small>
+            <small> Edit User</small>
         </h1>
+
+        
 <?php
         editUser();
+
+        
         ?>
         <!-- /.container-fluid -->
 

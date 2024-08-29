@@ -59,7 +59,7 @@
             </ul>
         </li>
         <li>
-            <a href="index-rtl.html"><i class="fa fa-fw fa-dashboard"></i> Profile</a>
+            <a href="<?php echo BASE_URL; ?>/admin/profile.php"><i class="fa fa-fw fa-dashboard"></i> Profile</a>
         </li>
     </ul>
 </div>

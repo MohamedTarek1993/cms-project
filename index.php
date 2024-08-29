@@ -11,6 +11,17 @@ include('includes/header.php') ;
 
         <!-- Blog Entries Column -->
         <div class="col-md-8">
+            <h1 class="text-danger">
+                <?php 
+       if (isset($_SESSION['login'])) {
+        echo $_SESSION['login'];
+        unset($_SESSION['login']); // Clear the session message after displaying it
+    }
+
+
+            ?>
+            </h1>
+
 
             <h1 class="page-header">
                 Page Heading
@@ -40,8 +51,7 @@ include('includes/header.php') ;
 
     <hr>
 </div>
- <!-- Footer -->
- <?php include 'includes/footer.php'; ?>
+<!-- Footer -->
+<?php include 'includes/footer.php'; ?>
 </div>
 <!-- /.container -->
-
