@@ -261,9 +261,17 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
     if(!$result){
         die('query failed' . mysqli_error($connection));
     }
+    else{
+        echo "<script>
+        alert('Post added successfully');
+        window.location.href = 'show.php'; // Use JavaScript for redirection
+      </script>";
+        exit(); // Ensure the script stops after redirection
+    }
    
 }
 }
+
 
 }
 
@@ -307,66 +315,55 @@ if (isset($_GET['edit'])) {
 
 // Step 3: Handle the form submission to update the post
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
-    $post_title = $_POST['post_title'];
-    $post_author = $_POST['post_author'];
-    $post_cat_id = $_POST['post_cat_id'];
+    $post_title = mysqli_real_escape_string($connection, $_POST['post_title']);
+$post_author = mysqli_real_escape_string($connection, $_POST['post_author']);
+$post_cat_id = mysqli_real_escape_string($connection, $_POST['post_cat_id']);
+$post_content = mysqli_real_escape_string($connection, $_POST['post_content']);
+$post_tags = mysqli_real_escape_string($connection, $_POST['post_tags']);
+$post_status = mysqli_real_escape_string($connection, $_POST['post_status']);
     $post_date = date('Y-m-d');
     $post_image = $_FILES['post_image']['name'];
     $post_image_temp = $_FILES['post_image']['tmp_name'];
-    $post_content = $_POST['post_content'];
-    $post_tags = $_POST['post_tags'];
-    //  $post_comment_count = $_POST['post_comment_count'];  ;
-    $post_status = $_POST['post_status'];
 
-    // move uploaded image to images folder
+    /// check if image are empty
 
-    
-    /// check if fields are empty
-    if($post_title == "" || empty($post_title  )){
-        echo "<p class='text-danger'>Post title must not be empty</p>";
-    } elseif ($post_author == "" || empty($post_author  )) {
-        echo "<p class='text-danger'>Post author must not be empty</p>";
-    } elseif ($post_cat_id == "" || empty($post_cat_id  )) {
-        echo "<p class='text-danger'>Post category must not be empty</p>";
-    } elseif ($post_image == "" || empty($post_image  )) {
-        $query = "SELECT * FROM posts WHERE post_id = $post_id";
+    if (empty($post_image)) {
+        $query = "SELECT post_image FROM posts WHERE post_id = $post_id";
         $result = mysqli_query($connection, $query);
-    
-    if ($row = mysqli_fetch_array($result)) {
+        $row = mysqli_fetch_array($result);
         $post_image = $row['post_image'];
-    }  else{
+    } else {
         move_uploaded_file($post_image_temp, "../../images/$post_image");
-
     }
-    } elseif ($post_content == "" || empty($post_content  )) {
-        echo "<p class='text-danger'>Post content must not be empty</p>";
-    } elseif ($post_tags == "" || empty($post_tags  )) {
-        echo "<p class='text-danger'>Post tags must not be empty</p>";
-    } elseif ($post_status == "" || empty($post_status  )) {
-        echo "<p class='text-danger'>Post status must not be empty</p>";
-    } elseif ($post_date == "" || empty($post_date  )) {
-        echo today('Y-m-d'); ;
-    } 
-    else{ 
-    $query = "UPDATE posts SET ";
-    $query .= "post_title = '{$post_title}', ";
-    $query .= "post_author = '{$post_author}', ";
-    $query .= "post_cat_id = '{$post_cat_id}', ";
-    $query .= "post_date = '{$post_date}', ";
-    $query .= "post_image = '{$post_image}', ";
-    $query .= "post_content = '{$post_content}', ";
-    $query .= "post_tags = '{$post_tags}', ";
-    $query .= "post_status = '{$post_status}' ";
-    $query .= "WHERE post_id = {$post_id} ";
-    $result = mysqli_query($connection , $query);
+   // Check if required fields are empty
+if (empty($post_title) || empty($post_author) || empty($post_cat_id) || empty($post_content) || empty($post_tags) || empty($post_status)) {
+    echo "<p class='text-danger'>All fields are required.</p>";
+} else {
+    // Process the form and update the post
+    $query = "UPDATE posts SET 
+              post_title = '{$post_title}', 
+              post_author = '{$post_author}', 
+              post_cat_id = '{$post_cat_id}', 
+              post_date = '{$post_date}', 
+              post_image = '{$post_image}', 
+              post_content = '{$post_content}', 
+              post_tags = '{$post_tags}', 
+              post_status = '{$post_status}' 
+              WHERE post_id = {$post_id}";
+
+    $result = mysqli_query($connection, $query);
 
     if (!$result) {
         die('Query failed: ' . mysqli_error($connection));
     } else {
-        echo "<p class='text-success'>Post updated successfully</p>";
+        echo "<script>
+                alert('Post updated successfully');
+                window.location.href = 'show.php';
+              </script>";
+        exit();
     }
-   
 }
+
 }
 ?>
 
@@ -380,13 +377,27 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
     <div class="form-group">
         <label for="name">Edit Post Content</label>
         <textarea type="text" class="form-control" name="post_content">
-    <?= $post_content ?>        
-</textarea>
+    <?= $post_content ?></textarea>
     </div>
 
     <div class="form-group">
         <label for="name">Edit Post Author</label>
-        <input value="<?= $post_author ?>" type="text" class="form-control" name="post_author">
+        <select class="form-control" name="post_author" id="">
+            <?php
+            $query = "SELECT * FROM users";
+            $select_users = mysqli_query($connection, $query);
+
+            while ($row = mysqli_fetch_assoc($select_users)) {
+                $user_name = $row['user_name'];
+                if ($user_name == $post_author) {
+                    echo "<option value='$user_name' selected>$user_name</option>";
+                } else {
+                    echo "<option value='$user_name'>$user_name</option>";
+                }
+            }
+
+            ?>
+        </select>
     </div>
 
     <div class="form-group">
@@ -412,7 +423,20 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
 
     <div class="form-group">
         <label for="name">Edit Post Status</label>
-        <input value="<?= $post_status ?>" type="text" class="form-control" name="post_status">
+        <select class="form-control" name="post_status">
+            <?php  
+        if($post_status == 'published'){ ?>
+            <option value="published" selected>Published</option>
+            <option value="draft">Draft</option>
+            <?php
+        } elseif( $post_status == 'draft'){
+            ?>
+            <option selected value="draft">Draft</option>
+            <option value="published">Published</option>
+            <?php
+        }
+        ?>
+        </select>
     </div>
 
     <div class="form-group">
@@ -567,7 +591,295 @@ if(isset($_GET['unapprove'])){
  * @return void
  */
 
- include 'users/function.php';
+
+
+
+//SHOW ALL USERS
+
+function showAllUsers(){
+    global  $connection ; 
+//selecting all categories in navmenu
+$query = "SELECT * FROM users ";
+$select_all_users = mysqli_query($connection , $query);
+if(!$select_all_users){
+    die('query failed' . mysqli_error($connection));
+}
+
+   
+//DELETE user 
+
+if(isset($_GET['delete'])){
+
+    $user_id = $_GET['delete'];
+    $query_delete = "DELETE FROM users WHERE user_id = $user_id";
+    $result = mysqli_query($connection , $query_delete);
+    if(!$result){
+        die('query failed' . mysqli_error($connection));
+    }
+    else{
+        header("Location: show.php");
+        echo '<script>alert("User Deleted")</script>' ;
+    }
+    
+}
+
+while($all_users = mysqli_fetch_assoc($select_all_users)) : ?>
+<tr>
+    <td><?php echo $all_users['user_id']; ?></td>
+    <td><?php echo $all_users['user_name']; ?></td>
+    <td><?php echo $all_users['user_password']; ?></td>
+    <td><?php echo $all_users['user_email']; ?></td>
+    <td><?php echo $all_users['user_firstname']; ?></td>
+    <td><?php echo $all_users['user_lastname']; ?></td>
+    <td>
+        <img style="width: 100px; height: 100px; object-fit: cover; " class="img-responsive"
+            src="../..//images/<?= $all_users['user_image'] ?>" alt="" />
+    </td>
+    <td><?php echo $all_users['user_role']; ?></td>
+    <td><a href="show.php?delete=<?php echo $all_users['user_id']; ?>" class="btn btn-danger">Delete
+    </td>
+    <td>
+        <a href="edit.php?edit=<?php echo $all_users['user_id'];?>"> Update </a>
+    </td>
+</tr>
+<?php endwhile; 
+}
+
+
+
+/**
+ * Adds a new post to the database.
+ *
+ * @throws Exception if any of the required fields are empty.
+ * @return void
+ */
+
+ function adduser(){
+
+    global  $connection ; 
+    // 
+if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
+    $user_name = $_POST['user_name'];
+    $user_password = $_POST['user_password'];
+    $user_email = $_POST['user_email'];
+    $user_image = $_FILES['user_image']['name'];
+    $user_image_temp = $_FILES['user_image']['tmp_name'];
+    $user_firstname = $_POST['user_firstname'];
+    $user_lastname = $_POST['user_lastname'];
+    $user_role = $_POST['user_role'];
+
+    // move uploaded image to images folder
+    move_uploaded_file($user_image_temp, "../../images/$user_image");
+
+   
+
+ /// check if fields are empty
+    if($user_name == "" || empty($user_name  )){
+        echo "<p class='text-danger'>User title must not be empty</p>";
+    } elseif ( empty($user_password  )) {
+        echo "<p class='text-danger'> User password must not be empty</p>";
+    } elseif ( empty($user_email  )) {
+        echo "<p class='text-danger'> User email must not be empty</p>";
+    } elseif (  empty($user_image  )) {
+        echo "<p class='text-danger'>User image must not be empty</p>";
+    } elseif ( empty($user_firstname  )) {
+        echo "<p class='text-danger'>User firstname must not be empty</p>";
+    } elseif ( empty($user_lastname  )) {
+        echo "<p class='text-danger'>User lastname must not be empty</p>";
+    } elseif ( empty($user_role  )) {
+        echo "<p class='text-danger'>User role must not be empty</p>";
+    } 
+    // inser the data into database
+    else{
+   
+    $query = "INSERT INTO users(user_name,user_password,user_email,user_image,user_firstname,user_lastname,user_role ) VALUES('{$user_name}','{$user_password}','{$user_email}','{$user_image}','{$user_firstname}','{$user_lastname}','{$user_role}')";
+    $result = mysqli_query($connection , $query);
+
+    if(!$result){
+        die('query failed' . mysqli_error($connection));
+    }
+    else{
+        header("Location: show.php");
+        echo '<script>alert("User Added")</script>' ;
+    }
+   
+}
+}
+
+}
+
+
+/**
+ * Edits a user in the database.
+ *
+ * @throws Exception if any of the required fields are empty.
+ * @return void
+ */
+
+ function editUser() {
+     global $connection;
+ 
+     // Step 1: Get the ID from the URL
+     if (isset($_GET['edit'])) {
+         $user_id = intval($_GET['edit']); // Ensure ID is an integer
+ 
+         // Step 2: Query the database for the user with the specified ID
+         $query = "SELECT * FROM users WHERE user_id = $user_id";
+         $result = mysqli_query($connection, $query);
+         
+         if (!$result) {
+             // Output the error if the query fails
+             die("Query failed: " . mysqli_error($connection));
+         } elseif ($result && mysqli_num_rows($result) > 0) {
+             $user = mysqli_fetch_assoc($result);
+             $user_id = $user['user_id'];
+             $user_name = $user['user_name'];
+             $user_password = $user['user_password'];
+             $user_email = $user['user_email'];
+             $user_firstname = $user['user_firstname'];
+             $user_lastname = $user['user_lastname'];
+             $user_image = $user['user_image'];
+             $user_role = $user['user_role'];
+         } else {
+             die("User not found");
+         }
+     }
+ 
+     // Step 3: Handle the form submission to update the user
+     if (isset($_POST['submit'])) {
+         $user_id = intval($_POST['user_id']); // Ensure ID is an integer
+         $user_name = mysqli_real_escape_string($connection, $_POST['user_name']);
+         $user_password = mysqli_real_escape_string($connection, $_POST['user_password']);
+         $user_email = mysqli_real_escape_string($connection, $_POST['user_email']);
+         $user_image = $_FILES['user_image']['name'];
+         $user_image_temp = $_FILES['user_image']['tmp_name'];
+         $user_firstname = mysqli_real_escape_string($connection, $_POST['user_firstname']);
+         $user_lastname = mysqli_real_escape_string($connection, $_POST['user_lastname']);
+         $user_role = mysqli_real_escape_string($connection, $_POST['user_role']);
+ 
+         // Validate form fields
+         if (empty($user_name)) {
+             echo "<p class='text-danger'>User Name must not be empty</p>";
+         } elseif (empty($user_password)) {
+             echo "<p class='text-danger'>User password must not be empty</p>";
+         } elseif (empty($user_email)) {
+             echo "<p class='text-danger'>User email must not be empty</p>";
+         } elseif (empty($user_firstname)) {
+             echo "<p class='text-danger'>User firstname must not be empty</p>";
+         } elseif (empty($user_lastname)) {
+             echo "<p class='text-danger'>User lastname must not be empty</p>";
+         } elseif (empty($user_role)) {
+             echo "<p class='text-danger'>User role must not be empty</p>";
+         } else {
+             // Handle image upload
+             if (!empty($user_image_temp)) {
+                 $upload_directory = "../../images/";
+                 $upload_file = $upload_directory . basename($user_image);
+ 
+                 if (move_uploaded_file($user_image_temp, $upload_file)) {
+                     echo "<p class='text-success'>Image uploaded successfully</p>";
+                 } else {
+                     echo "<p class='text-danger'>Failed to upload image</p>";
+                     $user_image = ''; // Clear the image name if upload fails
+                 }
+             } else {
+                 // Fetch current image if no new image is uploaded
+                 $query = "SELECT user_image FROM users WHERE user_id = $user_id";
+                 $result = mysqli_query($connection, $query);
+                 if ($row = mysqli_fetch_assoc($result)) {
+                     $user_image = $row['user_image'];
+                 }
+             }
+ 
+             // Update user details
+             $query = "UPDATE users SET ";
+             $query .= "user_name = '{$user_name}', ";
+             $query .= "user_password = '{$user_password}', ";
+             $query .= "user_email = '{$user_email}', ";
+             $query .= "user_image = '{$user_image}', ";
+             $query .= "user_firstname = '{$user_firstname}', ";
+             $query .= "user_lastname = '{$user_lastname}', ";
+             $query .= "user_role = '{$user_role}' ";
+             $query .= "WHERE user_id = {$user_id}";
+ 
+             $result = mysqli_query($connection, $query);
+ 
+             if (!$result) {
+                 die('Query failed: ' . mysqli_error($connection));
+             } else {
+                 // Redirect back to the admin page
+                 echo "<p class='text-success'>User updated successfully</p>";
+                 header("Location: show.php");
+                 exit(); // Make sure to exit after header redirection
+             }
+         }
+      
+     }
+     ?>
+
+<form action="edit.php" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($user_id); ?>">
+
+    <div class="form-group">
+        <label for="name">Edit User Name</label>
+        <input value="<?= htmlspecialchars($user_name) ?>" type="text" class="form-control" name="user_name">
+    </div>
+
+    <div class="form-group">
+        <label for="password">Edit User Password</label>
+        <input value="<?= htmlspecialchars($user_password) ?>" type="password" class="form-control"
+            name="user_password">
+    </div>
+
+    <div class="form-group">
+        <label for="email">Edit User Email</label>
+        <input value="<?= htmlspecialchars($user_email) ?>" type="email" class="form-control" name="user_email">
+    </div>
+
+    <div class="form-group">
+        <label for="image">Edit User Image</label>
+        <img style="width: 100px; height: 100px; display: block;"
+            src="../../images/<?= htmlspecialchars($user_image) ?>" alt="User Image">
+        <input type="file" class="form-control" name="user_image">
+    </div>
+
+    <div class="form-group">
+        <label for="firstname">Edit User Firstname</label>
+        <input value="<?= htmlspecialchars($user_firstname) ?>" type="text" class="form-control" name="user_firstname">
+    </div>
+
+    <div class="form-group">
+        <label for="lastname">Edit User Lastname</label>
+        <input value="<?= htmlspecialchars($user_lastname) ?>" type="text" class="form-control" name="user_lastname">
+    </div>
+
+    <div class="form-group">
+        <label for="role">Edit User Role</label>
+        <select class="form-control" name="user_role">
+            <?php
+                  $query = "SELECT DISTINCT user_role FROM users";
+                  $select_roles = mysqli_query($connection, $query);
+      
+                  if (!$select_roles) {
+                      die("QUERY FAILED: " . mysqli_error($connection));
+                  }
+      
+                  while ($row = mysqli_fetch_assoc($select_roles)) {
+                      $user_role_title = $row['user_role'];
+                      $selected = ($user_role == $user_role_title) ? 'selected' : '';
+                      echo "<option value='$user_role_title' $selected>$user_role_title</option>";
+                  }
+                  ?>
+        </select>
+    </div>
+
+    <button name="submit" type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<?php
+ }
+
+
 
  
 /**

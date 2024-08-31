@@ -1,4 +1,5 @@
 <?php 
+define('BASE_URL', '/cms-project');
 ?>
 
 <form action="includes/login.php" method="post">
@@ -21,4 +22,6 @@
             </button>
         </span>
     </div>
+
+    <span class="pull-right"><a href="<?php echo BASE_URL ;  ?>/register.php"> Register Now</a></span>
 </form>

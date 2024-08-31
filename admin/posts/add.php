@@ -17,7 +17,7 @@ addPost();
             <small> Add Post</small>
         </h1>
 
-        <form action="#" method="post" enctype="multipart/form-data">
+        <form action="" method="post" enctype="multipart/form-data">
 
             <div class="form-group">
                 <label for="name">Add Post Title</label>
@@ -26,12 +26,24 @@ addPost();
 
             <div class="form-group">
                 <label for="name">Add Post Content</label>
-                <textarea type="text" class="form-control" name="post_content"> </textarea>
+                <textarea id="summernote" type="text" class="form-control" name="post_content"></textarea>
             </div>
 
             <div class="form-group">
                 <label for="name">Add Post Author</label>
-                <input type="text" class="form-control" name="post_author">
+                <select class="form-control" name="post_author" id="post_author">
+                    <?php 
+                    $query = "SELECT * FROM users WHERE user_role != 'subscriber'";
+                    $select_users = mysqli_query($connection, $query);
+                    while ($row = mysqli_fetch_assoc($select_users)) {
+                        
+                        $user_name = $row['user_name'];
+                            echo "<option value='$user_name'>$user_name</option>";
+                        
+                    }
+        
+                ?>
+                </select>
             </div>
 
             <div class="form-group">
@@ -44,11 +56,9 @@ addPost();
             while ($row = mysqli_fetch_assoc($select_categories)) {
                 $cat_id = $row['cat_id'];
                 $cat_title = $row['cat_title'];
-                if ($cat_id == $post_cat_id) {
-                    echo "<option value='$cat_id' selected>$cat_title</option>";
-                } else {
+                        
                     echo "<option value='$cat_id'>$cat_title</option>";
-                }
+                
             }
 
             ?>
@@ -57,7 +67,10 @@ addPost();
 
             <div class="form-group">
                 <label for="name">Add Post Status</label>
-                <input type="text" class="form-control" name="post_status">
+                <select class="form-control" name="post_status">
+                    <option selected value="draft">Draft</option>
+                    <option value="published">Published</option>
+                </select>
             </div>
 
             <div class="form-group">

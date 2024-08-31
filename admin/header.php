@@ -36,8 +36,13 @@ ob_start();
     <!-- Custom CSS -->
     <link href="<?php echo BASE_URL; ?>/admin/css/sb-admin.css" rel="stylesheet">
 
+      <!-- Summernote CSS -->
+      <link href="<?php echo BASE_URL; ?>/admin/css/summernote-min.css" rel="stylesheet">
+
     <!-- Custom Fonts -->
     <link href="<?php echo BASE_URL; ?>/admin/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
     <!-- <link rel="stylesheet" href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.min.css"> -->
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

@@ -24,6 +24,16 @@ if (isset($_GET['post_id'])) :
 
             <!-- Blog Post -->
 
+            <?php
+if (isset($_SESSION['user_role']) && $_SESSION['user_role'] !== 'subscriber'):
+    ?>
+
+            <div class="label label-success py-2 px-3">
+                <a href="admin/posts/edit.php?edit=<?= $post_data['post_id'] ; ?>" class="btn text-white">Edit Post</a>
+            </div>
+
+            <?php endif;  ?>
+
             <!-- Title -->
             <h1><?php echo $post_data['post_title']; ?></h1>
 
@@ -53,11 +63,14 @@ if (isset($_GET['post_id'])) :
             <!-- Blog Comments -->
 
             <!-- Comments Form -->
+             <?php
+             if(isset($_SESSION['user_role']) ):
+             ?>
             <div class="well">
                 <h4>Leave a Comment:</h4>
                 <?php addComment($post_data['post_id']) ; ?>
             </div>
-
+             <?php endif ; ?>
             <hr>
 
             <!-- Posted Comments -->
