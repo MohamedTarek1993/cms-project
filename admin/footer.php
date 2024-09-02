@@ -15,12 +15,22 @@
 <!-- <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script> -->
 
 
+<!-- loader -->
+
+<script>
+$('#load-screen').delay(700).fadeOut('500', function() {
+    $(this).remove();
+});
+</script>
+
 <!-- SummerNote Initialize -->
 <script>
 $(document).ready(function() {
     $('#summernote').summernote();
 });
 </script>
+
+
 
 </body>
 

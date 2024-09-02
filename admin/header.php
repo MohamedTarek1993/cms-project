@@ -36,8 +36,8 @@ ob_start();
     <!-- Custom CSS -->
     <link href="<?php echo BASE_URL; ?>/admin/css/sb-admin.css" rel="stylesheet">
 
-      <!-- Summernote CSS -->
-      <link href="<?php echo BASE_URL; ?>/admin/css/summernote-min.css" rel="stylesheet">
+    <!-- Summernote CSS -->
+    <link href="<?php echo BASE_URL; ?>/admin/css/summernote-min.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="<?php echo BASE_URL; ?>/admin/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -67,11 +67,37 @@ ob_start();
     tr:nth-child(even) {
         background-color: #f2f2f2;
     }
+
+    #load-screen {
+        background: url(../../images/header-back.png);
+        position: fixed;
+        z-index: 10000;
+        top: 0px;
+        width: 100%;
+        height: 1600px;
+
+    }
+
+
+    #loading {
+        width: 500px;
+        height: 500px;
+        margin: 10% auto;
+        background: url(../../images/loader.gif);
+        background-size: 40%;
+        background-repeat: no-repeat;
+        background-position: center;
+
+    }
     </style>
 </head>
 
 <body>
-
+    <!-- LOADER -->
+    <div id="load-screen">
+        <div id="loading"></div>
+    </div>
+    <!-- LOADER -->
     <div id="wrapper">
 
         <!-- Navigation -->
@@ -188,8 +214,7 @@ ob_start();
 
                         <li class="divider"></li>
                         <li>
-                            <a href="<?php echo BASE_URL; ?>/includes/logout.php"><i
-                                    class="fa fa-fw fa-power-off"></i>
+                            <a href="<?php echo BASE_URL; ?>/includes/logout.php"><i class="fa fa-fw fa-power-off"></i>
                                 Log Out</a>
                         </li>
                     </ul>

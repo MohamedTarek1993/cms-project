@@ -13,6 +13,8 @@ if (isset( $_POST['login'])) {
     $user_name = mysqli_real_escape_string($connection, $user_name);
     $user_password = mysqli_real_escape_string($connection, $user_password);
 
+
+
     $query = "SELECT * FROM users WHERE user_name = '{$user_name}'";
     $select_user_query = mysqli_query($connection, $query);
 
@@ -27,8 +29,9 @@ if (isset( $_POST['login'])) {
         $db_user_first_name = $row['user_firstname'];
         $db_last_name = $row['user_lastname'];
         $db_user_password = $row['user_password'];
-        $db_user_role = $row['user_role'];      
+        $db_user_role = $row['user_role'];     
     }
+    
 
     if ( $user_name === $db_user_name || $user_password === $db_user_password  ) {
         // Successful login

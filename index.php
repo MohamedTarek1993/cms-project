@@ -24,13 +24,19 @@ include('includes/header.php') ;
 
 
             <h1 class="page-header">
-                Page Heading
-                <small>Secondary Text</small>
+                Home Page
             </h1>
-
-            <!-- HOME CARDS -->
+            <!-- LOOP THE POSTS -->
+            <?php   while($all_posts = mysqli_fetch_assoc($select_all_posts)): ?>
+            <!-- LOOP THE POSTS -->
+            <!-- CHECH POST STATUS PUPLISHED SHOW OR NOT -->
+            <?php  if($all_posts['post_status'] == 'published'): ?>
+            <!-- CHECH POST STATUS PUPLISHED SHOW OR NOT -->
+            <!-- HOME CARDS IN TEMPLATE PARTS -->
             <?php include 'includes/template-parts/card-home.php'  ?>
             <!-- HOME CARDS -->
+            <?php endif; ?>
+            <?php   endwhile; ?>
             <!-- Pager -->
             <ul class="pager">
                 <li class="previous">

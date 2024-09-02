@@ -149,8 +149,12 @@ if(isset($_GET['delete'])){
         die('query failed' . mysqli_error($connection));
     }
     else{
-        header("Location: show.php");
-        echo '<script>alert("Post Deleted")</script>' ;
+        echo "<script>
+        confirm('Post deleted');
+        window.location.href = 'show.php'; // Use JavaScript for redirection
+      </script>";
+        exit();
+       
     }
     
 }
@@ -241,9 +245,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
         echo "<p class='text-danger'>Post author must not be empty</p>";
     } elseif ($post_cat_id == "" || empty($post_cat_id  )) {
         echo "<p class='text-danger'>Post category must not be empty</p>";
-    } elseif ($post_image == "" || empty($post_image  )) {
-        echo "<p class='text-danger'>Post image must not be empty</p>";
-    } elseif ($post_content == "" || empty($post_content  )) {
+    } 
+    // elseif ( empty($post_image  )) {
+    //     echo "<p class='text-danger'>Post image must not be empty</p>";
+    // } 
+    elseif ($post_content == "" || empty($post_content  )) {
         echo "<p class='text-danger'>Post content must not be empty</p>";
     } elseif ($post_tags == "" || empty($post_tags  )) {
         echo "<p class='text-danger'>Post tags must not be empty</p>";
@@ -479,8 +485,8 @@ if (empty($post_title) || empty($post_author) || empty($post_cat_id) || empty($p
 
 
 
-//SHOW ALL Posts
-
+//SHOW ALL COMMENTS
+ob_start() ;
 function showAllComments(){
     global  $connection ; 
 //selecting all categories in navmenu
@@ -502,8 +508,10 @@ if(isset($_GET['delete'])){
         die('query failed' . mysqli_error($connection));
     }
     else{
-        header("Location: show.php");
         echo '<script>alert("comment Deleted")</script>' ;
+        header("Location: show.php");
+        exit();
+      
     }
     
 }
@@ -515,8 +523,9 @@ while($all_comments = mysqli_fetch_assoc($select_all_comments)) : ?>
     <td><?php echo $all_comments['comment_content']; ?></td>
     <td><?php echo $all_comments['comment_email']; ?></td>
     <td><?php echo $all_comments['comment_status']; ?></td>
-    <?php  $puery = "SELECT * FROM posts WHERE post_id = $all_comments[comment_post_id]"; 
-     $select_posts_relared_comment = mysqli_query($connection , $puery);
+    <?php 
+        $query = "SELECT * FROM posts WHERE post_id = " . (int)$all_comments['comment_post_id'];
+        $select_posts_relared_comment = mysqli_query($connection , $query);
      while($all_posts = mysqli_fetch_assoc($select_posts_relared_comment)){
         ?>
     <td> <?php echo $all_posts['post_title']; ?></td>
@@ -578,7 +587,7 @@ if(isset($_GET['unapprove'])){
         echo '<script>alert("comment unapproved")</script>' ;
     }
 }
-
+ob_end_flush() ;
 
 
 /**
@@ -691,8 +700,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
     } 
     // inser the data into database
     else{
-   
-    $query = "INSERT INTO users(user_name,user_password,user_email,user_image,user_firstname,user_lastname,user_role ) VALUES('{$user_name}','{$user_password}','{$user_email}','{$user_image}','{$user_firstname}','{$user_lastname}','{$user_role}')";
+   // Encrypting password
+   $hashed_password = password_hash($user_password, PASSWORD_BCRYPT);
+    $query = "INSERT INTO users(user_name,user_password,user_email,user_image,user_firstname,user_lastname,user_role ) VALUES('{$user_name}','{$hashed_password}','{$user_email}','{$user_image}','{$user_firstname}','{$user_lastname}','{$user_role}')";
     $result = mysqli_query($connection , $query);
 
     if(!$result){
@@ -756,7 +766,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
          $user_firstname = mysqli_real_escape_string($connection, $_POST['user_firstname']);
          $user_lastname = mysqli_real_escape_string($connection, $_POST['user_lastname']);
          $user_role = mysqli_real_escape_string($connection, $_POST['user_role']);
- 
+         if (!empty($user_password)) {
+            // Hash the new password
+            $hashed_password = password_hash($user_password, PASSWORD_BCRYPT);
+        } else {
+            // Keep the existing hashed password if no new password is entered
+            $hashed_password = $user_password;
+        }
          // Validate form fields
          if (empty($user_name)) {
              echo "<p class='text-danger'>User Name must not be empty</p>";

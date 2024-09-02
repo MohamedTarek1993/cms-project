@@ -1,4 +1,5 @@
 <?php 
+ob_start();
 
 include('includes/header.php') ;
  
@@ -39,7 +40,11 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] !== 'subscriber'):
 
             <!-- Author -->
             <p class="lead">
-                by <a href="#">Start Bootstrap</a>
+                by
+                <a
+                    href="author.php?post_author=<?= urlencode($post_data['post_author']) ?>&post_id=<?= urlencode($post_data['post_id']) ?>">
+                    <?= htmlspecialchars($post_data['post_author']) ?>
+                </a>
             </p>
 
             <hr>
@@ -63,14 +68,30 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] !== 'subscriber'):
             <!-- Blog Comments -->
 
             <!-- Comments Form -->
-             <?php
+            <?php
              if(isset($_SESSION['user_role']) ):
+                $messa_comment = addComment($post_data['post_id']);
              ?>
             <div class="well">
                 <h4>Leave a Comment:</h4>
-                <?php addComment($post_data['post_id']) ; ?>
+                <form role="form" method="post">
+                    <span class="text-danger"><?= htmlspecialchars($messa_comment); ?></span>
+                    <div class="form-group">
+                        <label for=""> Add Author </label>
+                        <input type="text" name="author" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for=""> Add Email </label>
+                        <input type="text" name="email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for=""> Add Comment </label>
+                        <textarea name="comment" class="form-control" rows="3"></textarea>
+                    </div>
+                    <button name="submit" type="submit" class="btn btn-primary">Submit</button>
+                </form>
             </div>
-             <?php endif ; ?>
+            <?php endif ; ?>
             <hr>
 
             <!-- Posted Comments -->
@@ -100,6 +121,8 @@ endif;
 
 
 <!-- Footer -->
-<?php   include 'includes/footer.php'; ?>
+<?php   include 'includes/footer.php'; 
+ob_end_flush(); // Send the output buffer and turn off buffering
+?>
 </div>
 <!-- /.container -->

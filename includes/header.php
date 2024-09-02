@@ -64,10 +64,28 @@ session_start();
                     <?php   while($all_categories = mysqli_fetch_assoc($select_all_categories)): ?>
                     <li><a href="#"><?php echo $all_categories['cat_title']; ?></a></li>
                     <?php endwhile ; ?>
+                    <?php  
+                if(isset($_SESSION['user_role'])) {
+                ?>
+                    <li>
+                        <a href="admin/index.php">Dashboard</a>
+                    </li>
+                    <?php } ?>
 
                     <li>
-                        <a href="admin/index.php">Admin</a>
+                        <a href=" 
+                        <?php 
+                          if(isset($_SESSION['user_role'])) {
+                            if($_SESSION['user_role'] == 'Admin' || $_SESSION['user_role'] == 'Subscriber' || $_SESSION['user_role'] == 'contributor') { ?>
+                               login.php
+                                <?php } } else{ ?>
+                                 register.php
+                                    
+                           <?php     }
+                       ?>
+                        ">Login / Register</a>
                     </li>
+
                 </ul>
             </div>
             <!-- /.navbar-collapse -->

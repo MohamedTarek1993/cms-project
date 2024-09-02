@@ -1,8 +1,10 @@
 <?php 
 
-
 // add comment function
 function addComment($post_id){
+
+    $messa_comment = '';
+
     global  $connection ; 
     if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
         $comment_post_id = $post_id;
@@ -12,47 +14,33 @@ function addComment($post_id){
         $comment_date = date('Y-m-d');;
         $commebt_status = 'unapproved';
         // validate fields
-        if(empty($comment_author) || empty($comment_email) || empty($comment_content)){
-            echo "<p class='text-danger'>Field must not be empty</p>";
-        }
-        elseif(!filter_var($comment_email, FILTER_VALIDATE_EMAIL)){
-            echo "<p class='text-danger'>Invalid email</p>";
-        }
-        elseif(strlen($comment_content) < 10){
-            echo "<p class='text-danger'>Comment must be at least 10 characters</p>";
-        }
-        else{
+         // Validate the form inputs
+            if (empty($comment_author) || empty($comment_email) || empty($comment_content)) {
+                $messa_comment = "Fields must not be empty.";
+            } elseif (!filter_var($comment_email, FILTER_VALIDATE_EMAIL)) {
+                $messa_comment = "Invalid email format.";
+            } elseif (strlen($comment_content) < 10) {
+                $messa_comment = "Comment is too short.";
+            }   else{
        
         $query = "INSERT INTO comments(comment_post_id ,comment_author, comment_email, comment_content , comment_status, comment_date) VALUES('$comment_post_id', '$comment_author', '$comment_email', '$comment_content' , 'unapproved', '$comment_date')";
         $result = mysqli_query($connection , $query);
     
         if(!$result){
             die('query failed' . mysqli_error($connection));
+
         }
         else{
-           echo "<script> alert('Comment Added') </script>" ;
+        //    echo "<script> alert('Comment Added') </script>" ;
+           header("Location: " . $_SERVER['PHP_SELF'] . "?post_id=$post_id");
+           exit();
         }
        
     }
-    }
-    ?>
-<form role="form" method="post">
-    <div class="form-group">
-        <label for=""> Add Author </label>
-        <input type="text" name="author" class="form-control">
-    </div>
-    <div class="form-group">
-        <label for=""> Add Email </label>
-        <input type="text" name="email" class="form-control">
-    </div>
-    <div class="form-group">
-        <label for=""> Add Comment </label>
-        <textarea name="comment" class="form-control" rows="3"></textarea>
-    </div>
-    <button name="submit" type="submit" class="btn btn-primary">Submit</button>
-</form>
 
-<?php 
+    }
+    return $messa_comment; // Return the message to be displayed on the form
+
 }
 
 
