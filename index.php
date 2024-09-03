@@ -26,16 +26,47 @@ include('includes/header.php') ;
             <h1 class="page-header">
                 Home Page
             </h1>
+
+            <?php 
+            $per_page = 2;
+            if(isset($_GET['page'])){
+                $page = $_GET['page'];
+            }else{
+                $page = "";
+            }
+            if($page == "" || $page == 1){
+                $page_1 = 0;
+            }else{
+                $page_1 = ($page * $per_page) - $per_page;
+            }
+            
+            ?>
+            <?php 
+            // pajination for home page
+         $POST_query_count = "SELECT * FROM posts ";
+         $find_count = mysqli_query($connection , $POST_query_count);  
+         // COUNT THE NUMBER OF POST 
+         $count = mysqli_num_rows($find_count);
+         // CALCULATE THE NUMBER OF PAGES
+         $count = ceil($count / 2);
+
+            // MAKE QUERY FOR PUBLISHED POSTS ONLY
+             $query = "SELECT * FROM posts WHERE post_status = 'published' LIMIT $page_1 , $per_page";
+             $select_all_posts = mysqli_query($connection , $query);
+             if(!$select_all_posts){
+                 die('query failed' . mysqli_error($connection));
+             }
+            ?>
             <!-- LOOP THE POSTS -->
             <?php   while($all_posts = mysqli_fetch_assoc($select_all_posts)): ?>
             <!-- LOOP THE POSTS -->
             <!-- CHECH POST STATUS PUPLISHED SHOW OR NOT -->
-            <?php  if($all_posts['post_status'] == 'published'): ?>
+            <!-- <?php  if($all_posts['post_status'] == 'published'): ?> -->
             <!-- CHECH POST STATUS PUPLISHED SHOW OR NOT -->
             <!-- HOME CARDS IN TEMPLATE PARTS -->
             <?php include 'includes/template-parts/card-home.php'  ?>
             <!-- HOME CARDS -->
-            <?php endif; ?>
+            <!-- <?php endif; ?> -->
             <?php   endwhile; ?>
             <!-- Pager -->
             <ul class="pager">
@@ -56,6 +87,13 @@ include('includes/header.php') ;
     <!-- /.row -->
 
     <hr>
+    <ul class="pager">
+        <?php 
+        for($i = 1; $i <= $count; $i++){
+             echo '<li> <a class="page-link '. ($i == $page ? 'active' : '') . '" href="index.php?page=' . $i . '"> ' . $i . ' </a></li>' ;
+        }
+        ?>
+    </ul>
 </div>
 <!-- Footer -->
 <?php include 'includes/footer.php'; ?>

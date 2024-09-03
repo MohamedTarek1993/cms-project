@@ -16,16 +16,8 @@ include('includes/header.php') ;
     $email = mysqli_real_escape_string($connection, $email);
     $password = mysqli_real_escape_string($connection, $password);
 
-    // Select randSalt value only once
-    $query = "SELECT randSalt FROM users LIMIT 1";
-    $select_randsalt_query = mysqli_query($connection, $query);
-
-    if (!$select_randsalt_query) {
-        die("Query Failed" . mysqli_error($connection));
-    }
-
         // Encrypting password
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT , array('cost' => 12));
         // Insert the user into the database
         $query = "INSERT INTO users (user_name, user_email, user_password, user_role) ";
         $query .= "VALUES('{$username}', '{$email}', '{$hashed_password}', 'subscriber')";
@@ -51,7 +43,7 @@ include('includes/header.php') ;
                 <div class="col-xs-6 col-xs-offset-3">
                     <div class="form-wrap">
                         <h1>Register</h1>
-                        <form role="form" action="register.php" method="post" id="login-form" autocomplete="off">
+                        <form role="form"  method="post" id="login-form" autocomplete="off">
                             <div class="form-group">
                                 <label for="username" class="sr-only">username</label>
                                 <input type="text" name="username" id="username" class="form-control"

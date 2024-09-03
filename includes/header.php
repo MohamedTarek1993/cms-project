@@ -30,6 +30,12 @@ session_start();
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <style>
+          .pager li .page-link.active {
+        background-color: aqua;
+        color: black;
+    }
+    </style>
 </head>
 
 <body>

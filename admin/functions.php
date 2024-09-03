@@ -1059,3 +1059,59 @@ echo "<p class='text-success'>User updated successfully</p>";
 <?php
 
 }
+
+
+//USERS OMLINE EDIT FUNCTION ENDS
+function users_online() {
+    global $connection;
+
+    // Start session if not already started
+  
+    // Get current session ID and time
+    $session = session_id();
+    $time = time(); // Get current Unix timestamp
+    $time_out_in_seconds = 60;
+    $time_out = $time - $time_out_in_seconds;
+
+    // Query to check if the session already exists
+    $query = "SELECT * FROM users_online WHERE session = ?";
+    $stmt = mysqli_prepare($connection, $query);
+    mysqli_stmt_bind_param($stmt, "s", $session);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_store_result($stmt);
+    $count = mysqli_stmt_num_rows($stmt);
+    mysqli_stmt_close($stmt);
+
+    // Insert or update the session in the database
+    if ($count == 0) {
+        // Prepared statement for inserting a new session
+        $insert_query = "INSERT INTO users_online (session, time) VALUES (?, ?)";
+        $insert_stmt = mysqli_prepare($connection, $insert_query);
+        mysqli_stmt_bind_param($insert_stmt, "si", $session, $time);
+        if (!mysqli_stmt_execute($insert_stmt)) {
+            echo "Error inserting data: " . mysqli_error($connection);
+        }
+        mysqli_stmt_close($insert_stmt);
+    } else {
+        // Prepared statement for updating an existing session
+        $update_query = "UPDATE users_online SET time = ? WHERE session = ?";
+        $update_stmt = mysqli_prepare($connection, $update_query);
+        mysqli_stmt_bind_param($update_stmt, "is", $time, $session);
+        if (!mysqli_stmt_execute($update_stmt)) {
+            echo "Error updating data: " . mysqli_error($connection);
+        }
+        mysqli_stmt_close($update_stmt);
+    }
+
+    // Query to count active sessions within the timeout period
+    $user_online_query = "SELECT * FROM users_online WHERE time > ?";
+    $user_online_stmt = mysqli_prepare($connection, $user_online_query);
+    mysqli_stmt_bind_param($user_online_stmt, "i", $time_out);
+    mysqli_stmt_execute($user_online_stmt);
+    mysqli_stmt_store_result($user_online_stmt);
+    $count_user = mysqli_stmt_num_rows($user_online_stmt);
+    mysqli_stmt_close($user_online_stmt);
+
+    // Return the number of users online
+    return $count_user;
+}
