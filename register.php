@@ -16,6 +16,13 @@ include('includes/header.php') ;
     $email = mysqli_real_escape_string($connection, $email);
     $password = mysqli_real_escape_string($connection, $password);
 
+     // Check if the username or email already exists
+     $check_query = "SELECT * FROM users WHERE user_name = '{$username}' OR user_email = '{$email}'";
+     $check_result = mysqli_query($connection, $check_query);
+
+     if (mysqli_num_rows($check_result) > 0) {
+         echo "<script>alert('Username or email already exists');</script>";
+     }else{
         // Encrypting password
         $hashed_password = password_hash($password, PASSWORD_BCRYPT , array('cost' => 12));
         // Insert the user into the database
@@ -29,7 +36,7 @@ include('includes/header.php') ;
             echo "<script> alert('You are now registered and can log in'); </script>";
             header("Location: index.php");
         }
-    
+    }
 }
 }
  ?>
@@ -43,7 +50,7 @@ include('includes/header.php') ;
                 <div class="col-xs-6 col-xs-offset-3">
                     <div class="form-wrap">
                         <h1>Register</h1>
-                        <form role="form"  method="post" id="login-form" autocomplete="off">
+                        <form role="form" method="post" id="login-form" autocomplete="off">
                             <div class="form-group">
                                 <label for="username" class="sr-only">username</label>
                                 <input type="text" name="username" id="username" class="form-control"

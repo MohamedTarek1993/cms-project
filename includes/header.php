@@ -1,8 +1,10 @@
 <?php 
 include 'includes/db.php';
 include 'includes/functions.php';
-session_start();
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+} 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,7 +33,7 @@ session_start();
     <![endif]-->
 
     <style>
-          .pager li .page-link.active {
+    .pager li .page-link.active {
         background-color: aqua;
         color: black;
     }

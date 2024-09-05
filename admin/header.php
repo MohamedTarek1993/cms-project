@@ -4,8 +4,9 @@ include 'includes/db.php';
 include 'functions.php';
 
 
-session_start();
- 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+} 
 // if session is not set this will redirect to login page or dashboard if is admin
 if (!isset($_SESSION['user_role']) ) {
 
@@ -56,6 +57,7 @@ ob_start();
     table {
         border-collapse: collapse;
         width: 100%;
+        overflow: scroll;
     }
 
     th,

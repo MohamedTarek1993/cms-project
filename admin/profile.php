@@ -1,7 +1,7 @@
 <?php
 
-include 'header.php' ;
-?>
+include 'header.php' ; ?>
+
 
 <div id="page-wrapper">
 
@@ -17,7 +17,8 @@ include 'header.php' ;
 
 
                 </h1>
-                <?php    profileUser(); ?>
+          <?php  profileUser(); ?>
+
             </div>
         </div>
         <!-- /.row -->

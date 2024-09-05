@@ -16,7 +16,11 @@ if(!$select_all_categories){
 
 if(isset($_GET['delete'])){
 
-    $the_cat_id = $_GET['delete'];
+    if(isset($_SESSION['user_role'])  ){
+       if($_SESSION['user_role'] == 'Admin' ){ 
+  
+
+    $the_cat_id = mysqli_real_escape_string($connection, $_GET['delete']);
     $query_delete = "DELETE FROM category WHERE cat_id = $the_cat_id";
     $result = mysqli_query($connection , $query_delete);
     if(!$result){
@@ -25,6 +29,8 @@ if(isset($_GET['delete'])){
     else{
         echo '<script>alert("Category Deleted")</script>' ;
     }
+}
+    }
     
 }
 
@@ -32,11 +38,16 @@ while($all_categories = mysqli_fetch_assoc($select_all_categories)) : ?>
 <tr>
     <td><?php echo $all_categories['cat_id']; ?></td>
     <td><?php echo $all_categories['cat_title']; ?></td>
+    <?php 
+     if(isset($_SESSION['user_role'])  ){
+        if($_SESSION['user_role'] == 'Admin' ){ 
+    ?>
     <td><a href="show.php?delete=<?php echo $all_categories['cat_id']; ?>" class="btn btn-danger">Delete
     </td>
     <td>
         <a href="edit.php?edit=<?php echo $all_categories['cat_id'];?>"> Update </a>
     </td>
+    <?php } } ?>
 </tr>
 <?php endwhile; 
 }
@@ -140,9 +151,10 @@ if(!$select_all_posts){
 
 //DELETE POST 
 
-if(isset($_GET['delete'])){
-
-    $the_post_id = $_GET['delete'];
+            if(isset($_GET['delete'])){
+                if(isset($_SESSION['user_role'])  ){
+                    if($_SESSION['user_role'] == 'Admin' ){
+    $the_post_id = mysqli_real_escape_string($connection, $_GET['delete']);
     $query_delete = "DELETE FROM posts WHERE post_id = $the_post_id";
     $result = mysqli_query($connection , $query_delete);
     if(!$result){
@@ -156,14 +168,15 @@ if(isset($_GET['delete'])){
         exit();
        
     }
-    
+       }
+      }
 }
-
 while($all_posts = mysqli_fetch_assoc($select_all_posts)) : ?>
 <tr>
     <td><?php echo $all_posts['post_id']; ?></td>
     <td><?php echo $all_posts['post_author']; ?></td>
     <td><?php echo $all_posts['post_title']; ?></td>
+    <!-- SHOW RELATED CATEGORY -->
     <td><?php  
      $post_cat_id = $all_posts['post_cat_id'];
      $query = "SELECT * FROM category";
@@ -178,6 +191,7 @@ while($all_posts = mysqli_fetch_assoc($select_all_posts)) : ?>
 
      }
  ?></td>
+    <!-- SHOW RELATED CATEGORY -->
     <td><?php echo $all_posts['post_content']; ?></td>
     <td><?php echo $all_posts['post_status']; ?></td>
     <td>
@@ -196,16 +210,21 @@ $result = mysqli_query($connection, $query);
 if ($result) {
     $row = mysqli_fetch_assoc($result);
     $comment_count = $row['comment_count']; // Get the comment count
-    echo $comment_count; // Display the number of comments
+    echo '<a href="show.php?p=' . $post_id . '"> ' . $comment_count . '</a>' ; // Display the number of comments
 }
 ?>
     </td>
+
     <td><?php echo $all_posts['post_date']; ?></td>
+    <?php
+    if(isset($_SESSION['user_role'])  ):
+        if($_SESSION['user_role'] == 'Admin' ): ?>
     <td><a href="show.php?delete=<?php echo $all_posts['post_id']; ?>" class="btn btn-danger">Delete
     </td>
     <td>
         <a href="edit.php?edit=<?php echo $all_posts['post_id'];?>"> Update </a>
     </td>
+    <?php endif; endif; ?>
 </tr>
 <?php endwhile; 
 }
@@ -500,8 +519,9 @@ if(!$select_all_comments){
 //DELETE comment 
 
 if(isset($_GET['delete'])){
-
-    $the_comment_id = $_GET['delete'];
+    if(isset($_SESSION['user_role'])  ){
+        if($_SESSION['user_role'] == 'Admin' ){
+    $the_comment_id = mysqli_real_escape_string($connection, $_GET['delete']);
     $query_delete = "DELETE FROM comments WHERE comment_id = $the_comment_id";
     $result = mysqli_query($connection , $query_delete);
     if(!$result){
@@ -515,6 +535,8 @@ if(isset($_GET['delete'])){
     }
     
 }
+}
+}
 
 while($all_comments = mysqli_fetch_assoc($select_all_comments)) : ?>
 <tr>
@@ -523,6 +545,12 @@ while($all_comments = mysqli_fetch_assoc($select_all_comments)) : ?>
     <td><?php echo $all_comments['comment_content']; ?></td>
     <td><?php echo $all_comments['comment_email']; ?></td>
     <td><?php echo $all_comments['comment_status']; ?></td>
+
+    <!-- MAKE APROOVE AND DELETE COMMENT ONLY FOR ADMIN -->
+    <?php
+     if(isset($_SESSION['user_role'])  ){
+        if($_SESSION['user_role'] == 'Admin' ){ 
+    ?>
     <?php 
         $query = "SELECT * FROM posts WHERE post_id = " . (int)$all_comments['comment_post_id'];
         $select_posts_relared_comment = mysqli_query($connection , $query);
@@ -552,6 +580,10 @@ while($all_comments = mysqli_fetch_assoc($select_all_comments)) : ?>
     </td>
     <td><a href="show.php?delete=<?php echo $all_comments['comment_id']; ?>" class="btn btn-danger">Delete
     </td>
+    <?php
+        }
+    }
+    ?>
     <!-- <td>
         <a href="edit.php?edit=<?php echo $all_comments['comment_id'];?>"> Update </a>
     </td> -->
@@ -907,158 +939,164 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
 
 
 // Step 1: Get the ID from the URL
-function profileUser(){
+function profileUser() {
+    global $connection;
 
-global $connection ;
+    // Step 1: Fetch user data if the session is active
+    if (isset($_SESSION['user_name'])) {
+        $user_name = $_SESSION['user_name'];
+        $query = "SELECT * FROM users WHERE user_name = '$user_name'";
+        $result = mysqli_query($connection, $query);
 
-if(isset($_SESSION['user_name'])){
-$user_name = $_SESSION['user_name'];
-$query = "SELECT * FROM users WHERE user_name = '$user_name'";
-$result = mysqli_query($connection , $query);
-$user = mysqli_fetch_assoc($result);
-$user_id = $user['user_id'];
-$user_name = $user['user_name'];
-$user_password = $user['user_password'];
-$user_email = $user['user_email'];
-$user_image = $user['user_image'];
-$user_firstname = $user['user_firstname'];
-$user_lastname = $user['user_lastname'];
-$user_role = $user['user_role'];
-}
+        if ($result && mysqli_num_rows($result) > 0) {
+            $user = mysqli_fetch_assoc($result);
+            $user_id = $user['user_id'];
+            $user_name = $user['user_name'];
+            $user_password = $user['user_password'];
+            $user_email = $user['user_email'];
+            $user_image = $user['user_image'];
+            $user_firstname = $user['user_firstname'];
+            $user_lastname = $user['user_lastname'];
+            $user_role = $user['user_role'];
+        } else {
+            echo "<p class='text-danger'>User not found</p>";
+            return;
+        }
+    }
 
+    // Step 3: Handle the form submission to update the user
+    if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
+        $user_id = $_POST['user_id'];
+        $user_name = mysqli_real_escape_string($connection, $_POST['user_name']);
+        $user_password = mysqli_real_escape_string($connection, $_POST['user_password']);
+        $user_email = mysqli_real_escape_string($connection, $_POST['user_email']);
+        $user_image = $_FILES['user_image']['name'];
+        $user_image_temp = $_FILES['user_image']['tmp_name'];
+        $user_firstname = mysqli_real_escape_string($connection, $_POST['user_firstname']);
+        $user_lastname = mysqli_real_escape_string($connection, $_POST['user_lastname']);
+        $user_role = mysqli_real_escape_string($connection, $_POST['user_role']);
 
-// Step 3: Handle the form submission to update the post
-if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
-$user_id = $_POST['user_id'];
-$user_name = $_POST['user_name'];
-$user_password = $_POST['user_password'];
-$user_email = $_POST['user_email'];
-$user_image = $_FILES['user_image']['name'];
-$user_image_temp = $_FILES['user_image']['tmp_name'];
-$user_firstname = $_POST['user_firstname'];
-$user_lastname = $_POST['user_lastname'];
-$user_role = $_POST['user_role'];
+        // Validate form fields
+        if (empty($user_name)) {
+            echo "<p class='text-danger'>User Name must not be empty</p>";
+        } elseif (empty($user_password)) {
+            echo "<p class='text-danger'>User password must not be empty</p>";
+        } elseif (empty($user_email)) {
+            echo "<p class='text-danger'>User email must not be empty</p>";
+        } elseif (empty($user_firstname)) {
+            echo "<p class='text-danger'>User firstname must not be empty</p>";
+        } elseif (empty($user_lastname)) {
+            echo "<p class='text-danger'>User lastname must not be empty</p>";
+        } elseif (empty($user_role)) {
+            echo "<p class='text-danger'>User role must not be empty</p>";
+        } else {
+            // Handle image upload
+            if (!empty($user_image_temp)) {
+                $upload_directory = "../images/";
+                $upload_file = $upload_directory . basename($user_image);
 
-// move uploaded image to images folder
+                if (move_uploaded_file($user_image_temp, $upload_file)) {
+                    echo "<p class='text-success'>Image uploaded successfully</p>";
+                } else {
+                    echo "<p class='text-danger'>Failed to upload image</p>";
+                    $user_image = ''; // Clear the image name if upload fails
+                }
+            } else {
+                // Fetch current image if no new image is uploaded
+                $query = "SELECT user_image FROM users WHERE user_id = $user_id";
+                $result = mysqli_query($connection, $query);
+                if ($row = mysqli_fetch_assoc($result)) {
+                    $user_image = $row['user_image'];
+                }
+            }
 
+            // Update user details
+            $query = "UPDATE users SET 
+                user_name = '{$user_name}', 
+                user_password = '{$user_password}', 
+                user_email = '{$user_email}', 
+                user_image = '{$user_image}', 
+                user_firstname = '{$user_firstname}', 
+                user_lastname = '{$user_lastname}', 
+                user_role = '{$user_role}' 
+                WHERE user_id = {$user_id}";
 
-/// check if fields are empty
-if(empty($user_name )){
-echo "<p class='text-danger'>User Name must not be empty</p>";
-} elseif ( empty($user_password )) {
-echo "<p class='text-danger'> User password must not be empty</p>";
-} elseif ( empty($user_email )) {
-echo "<p class='text-danger'> User email must not be empty</p>";
-} // Check if the image field is empty
-elseif (empty($user_image)) {
-// Fetch the current image from the database if no new image is provided
-$query = "SELECT user_image FROM users WHERE user_id = $user_id";
-$result = mysqli_query($connection, $query);
-if ($row = mysqli_fetch_assoc($result)) {
-$user_image = $row['user_image'];
-}
-} elseif (!empty($user_image_temp)) {
-// Move the uploaded image if a new image is provided
-move_uploaded_file($user_image_temp, "../images/$user_image");
-} elseif ( empty($user_firstname )) {
-echo "<p class='text-danger'>User firstname must not be empty</p>";
-} elseif ( empty($user_lastname )) {
-echo "<p class='text-danger'>User lastname must not be empty</p>";
-} elseif ( empty($user_role )) {
-echo "<p class='text-danger'>User role must not be empty</p>";
-}
-else{
-$query = "UPDATE users SET ";
-$query .= "user_name = '{$user_name}', ";
-$query .= "user_password = '{$user_password}', ";
-$query .= "user_email = '{$user_email}', ";
-$query .= "user_image = '{$user_image}', ";
-$query .= "user_firstname = '{$user_firstname}', ";
-$query .= "user_lastname = '{$user_lastname}', ";
-$query .= "user_role = '{$user_role}' ";
-$query .= "WHERE user_id = {$user_id} ";
-$result = mysqli_query($connection , $query);
+            $result = mysqli_query($connection, $query);
 
-if (!$result) {
-die('Query failed: ' . mysqli_error($connection));
-} else {
-echo "<p class='text-success'>User updated successfully</p>";
-}
+            if (!$result) {
+                die('Query failed: ' . mysqli_error($connection));
+            } else {
+                echo "<p class='text-success'>User updated successfully</p>";
+                // Optionally redirect after a successful update
+                header("Location: profile.php"); // Adjust redirect path as needed
+                exit();
+            }
+        }
+    }
 
-}
-}
-?>
-
-<form action="#" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
+    ?>
+<form action="profile.php" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($user_id); ?>">
 
     <div class="form-group">
         <label for="name">Edit User Name</label>
-        <input value="<?= $user_name ?>" type="text" class="form-control" name="user_name">
+        <input value="<?= htmlspecialchars($user_name); ?>" type="text" class="form-control" name="user_name">
     </div>
 
     <div class="form-group">
-        <label for="name">Edit User password</label>
-        <input value="<?= $user_password ?>" type="password" class="form-control" name="user_password">
+        <label for="password">Edit User Password</label>
+        <input type="password" class="form-control" name="user_password">
     </div>
 
     <div class="form-group">
-        <label for="name">Edit user email</label>
-        <input value="<?= $user_email ?>" type="email" class="form-control" name="user_email">
+        <label for="email">Edit User Email</label>
+        <input value="<?= htmlspecialchars($user_email); ?>" type="email" class="form-control" name="user_email">
     </div>
 
     <div class="form-group">
-        <label for="name">Edit User image</label>
-        <img style="width: 100px; height: 100px; display: block;"
-            src="<?php echo BASE_URL ?>../images/<?= htmlspecialchars($user_image) ?>" alt="User Image">
+        <label for="image">Edit User Image</label>
+        <img style="width: 100px; height: 100px; display: block;" src="../images/<?= htmlspecialchars($user_image); ?>"
+            alt="User Image">
         <input type="file" class="form-control" name="user_image">
     </div>
 
     <div class="form-group">
-        <label for="name">Edit User firstname</label>
-        <input value="<?= $user_firstname ?>" type="text" class="form-control" name="user_firstname">
+        <label for="firstname">Edit User Firstname</label>
+        <input value="<?= htmlspecialchars($user_firstname); ?>" type="text" class="form-control" name="user_firstname">
     </div>
 
+    <div class="form-group">
+        <label for="lastname">Edit User Lastname</label>
+        <input value="<?= htmlspecialchars($user_lastname); ?>" type="text" class="form-control" name="user_lastname">
+    </div>
 
     <div class="form-group">
-        <label for="name">Edit User lastname</label>
-        <input value="<?= $user_lastname ?>" type="text" class="form-control" name="user_lastname">
-    </div>
-    <div class="form-group">
-        <label for="name">Edit User Role</label>
-        <select class="form-control" name="user_role" id="">
+        <label for="role">Edit User Role</label>
+        <select class="form-control" name="user_role">
             <?php
-    // Query to select user roles
-    $query = "SELECT DISTINCT user_role FROM users";
-    $select_roles = mysqli_query($connection, $query);
+            $query = "SELECT DISTINCT user_role FROM users";
+            $select_roles = mysqli_query($connection, $query);
 
-    if (!$select_roles) {
-        die("QUERY FAILED: " . mysqli_error($connection));
-    }
+            if (!$select_roles) {
+                die("QUERY FAILED: " . mysqli_error($connection));
+            }
 
-    // Loop through each role and create an option for it
-    while ($row = mysqli_fetch_assoc($select_roles)) {
-        $user_role_title = $row['user_role']; // Assign the role to the variable
-
-        // Check if the role should be selected by default (optional)
-        if (isset($selected_role) && $selected_role == $user_role_title) {
-            echo "<option value='$user_role_title' selected>$user_role_title</option>";
-        } else {
-            echo "<option value='$user_role_title'>$user_role_title</option>";
-        }
-    }
-    ?>
+            while ($row = mysqli_fetch_assoc($select_roles)) {
+                $user_role_title = $row['user_role'];
+                $selected = ($user_role == $user_role_title) ? 'selected' : '';
+                echo "<option value='$user_role_title' $selected>$user_role_title</option>";
+            }
+            ?>
         </select>
-
     </div>
-
 
     <button name="submit" type="submit" class="btn btn-primary">Submit</button>
 </form>
 
-<?php
 
+<?php
 }
+
 
 
 //USERS OMLINE EDIT FUNCTION ENDS

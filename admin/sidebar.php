@@ -6,7 +6,8 @@
         <li>
             <a href="<?php echo BASE_URL; ?>/admin"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
         </li>
-
+<!-- CHECK ROLE IF SUBSCRIBE DIDNT SHOW IN SIDEBAR -->
+    <?php   if($_SESSION['user_role'] !== 'subscriber' ):  ?>
         <li>
             <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-book"></i> Posts
                 <i class="fa fa-fw fa-caret-down"></i></a>
@@ -31,7 +32,12 @@
                 </li>
             </ul>
         </li>
-
+        <!-- CHECK ROLE IF SUBSCRIBE DIDNT SHOW IN SIDEBAR -->
+    <?php endif ?>
+        <?php 
+ if($_SESSION['user_role'] !== 'subscriber' &&  $_SESSION['user_role'] !== 'Contrbuitor'):
+ ?>
+        <!-- CHECK ROLE IF SUBSCRIBE AND CONTRBUITOR DIDNT SHOW IN SIDEBAR -->
         <li>
             <a href="javascript:;" data-toggle="collapse" data-target="#Comments"><i class="fa fa-fw fa-comment"></i>
                 Comments <i class="fa fa-fw fa-caret-down"></i></a>
@@ -44,7 +50,8 @@
                 </li>
             </ul>
         </li>
-
+        <!-- CHECK ROLE IF SUBSCRIBE AND CONTRBUITOR DIDNT SHOW IN SIDEBAR -->
+        <!-- CHECK ROLE IF SUBSCRIBE AND CONTRBUITOR DIDNT SHOW IN SIDEBAR -->
 
         <li>
             <a href="javascript:;" data-toggle="collapse" data-target="#user"><i class="fa fa-fw fa-users"></i> Users
@@ -58,10 +65,12 @@
                 </li>
             </ul>
         </li>
+        <?php endif ?>
+        <!-- CHECK ROLE IF SUBSCRIBE AND CONTRBUITOR DIDNT SHOW IN SIDEBAR -->
         <li>
             <a href="<?php echo BASE_URL; ?>/admin/profile.php"><i class="fa fa-fw fa-dashboard"></i> Profile</a>
         </li>
     </ul>
 
-    
+
 </div>
