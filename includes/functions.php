@@ -1,6 +1,28 @@
 <?php 
 
+/**
+ * Escapes a string to be used in a SQL query, removing HTML tags and
+ * trimming whitespace from the ends. This is the minimum amount of
+ * sanitization required to prevent an SQL injection attack.
+ *
+ * @param string $string The string to be escaped.
+ * @return string The sanitized string.
+ */
+function escape($string){
+    global $connection ;
+   return  mysqli_real_escape_string($connection , trim(strip_tags($string))) ;
+}
+
+
 // add comment function
+/**
+ * Adds a comment to the database.
+ *
+ * @param int $post_id The ID of the post to which the comment belongs.
+ *
+ * @return string The message to be displayed on the form if the comment was not
+ *     added successfully.
+ */
 function addComment($post_id){
 
     $messa_comment = '';

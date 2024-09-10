@@ -1,5 +1,7 @@
 <?php 
 
+
+
 //SHOW ALL CATEGORIES
 
 function showAllCategories(){
