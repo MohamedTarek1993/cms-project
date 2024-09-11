@@ -17,7 +17,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Blog Home - Start Bootstrap Template</title>
+    <title>Awab Blog</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -44,7 +44,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 
     <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <nav class="navbar  navbar-expand-lg  navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
@@ -55,22 +55,33 @@ if (session_status() === PHP_SESSION_NONE) {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.php">Start Bootstrap</a>
+                <a class="navbar-brand" href="index.php">Awab Blog</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <!-- <li>
-                        <a href="#">About</a>
-                    </li>
-                    <li>
-                        <a href="#">Services</a>
-                    </li> -->
+
                     <li>
                         <a href="contact.php">Contact</a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Category
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <?php   while($all_categories = mysqli_fetch_assoc($select_all_categories)): ?>
+                            <li><a class="dropdown-item"
+                                    href="categories.php?post_category_id=<?php echo $all_categories['cat_id']; ?>"><?php echo $all_categories['cat_title']; ?></a>
+                            </li>
+                            <?php endwhile ; ?>
+                           
+                        </ul>
+                    </li>
                     <?php   while($all_categories = mysqli_fetch_assoc($select_all_categories)): ?>
-                    <li><a href="categories.php?post_category_id=<?php echo $all_categories['cat_id']; ?>"><?php echo $all_categories['cat_title']; ?></a></li>
+                    <li><a
+                            href="categories.php?post_category_id=<?php echo $all_categories['cat_id']; ?>"><?php echo $all_categories['cat_title']; ?></a>
+                    </li>
                     <?php endwhile ; ?>
                     <?php  
                 if(isset($_SESSION['user_role'])) {
