@@ -60,17 +60,17 @@ if (session_status() === PHP_SESSION_NONE) {
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li>
+                    <!-- <li>
                         <a href="#">About</a>
                     </li>
                     <li>
                         <a href="#">Services</a>
-                    </li>
+                    </li> -->
                     <li>
-                        <a href="#">Contact</a>
+                        <a href="contact.php">Contact</a>
                     </li>
                     <?php   while($all_categories = mysqli_fetch_assoc($select_all_categories)): ?>
-                    <li><a href="#"><?php echo $all_categories['cat_title']; ?></a></li>
+                    <li><a href="categories.php?post_category_id=<?php echo $all_categories['cat_id']; ?>"><?php echo $all_categories['cat_title']; ?></a></li>
                     <?php endwhile ; ?>
                     <?php  
                 if(isset($_SESSION['user_role'])) {

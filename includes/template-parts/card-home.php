@@ -24,6 +24,12 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] !== 'subscriber'):
 </p>
 
 <p><span class="glyphicon glyphicon-time"></span> Posted on <?=  $all_posts['post_date'] ?></p>
+<a href="categories.php?post_category_id=<?= $all_posts['post_cat_id'] ?>"><span
+        class="glyphicon glyphicon-time"></span> Category: <?php 
+        $select_category_name = mysqli_query($connection, "SELECT * FROM category WHERE cat_id = '{$all_posts['post_cat_id']}' ");
+        $category_list = mysqli_fetch_assoc($select_category_name);
+        echo $category_list['cat_title']; 
+    ?></a>
 <hr>
 <div class="image-wrap">
     <a href="<?php echo 'post.php?post_id=' . $all_posts['post_id'] ; ?>">

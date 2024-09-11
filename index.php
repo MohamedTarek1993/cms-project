@@ -9,7 +9,6 @@ include('includes/header.php');
         <div class="col-md-8">
             <h1 class="text-danger">
                 <?php 
-                // Display any login messages
                 if (isset($_SESSION['login'])) {
                     echo $_SESSION['login'];
                     unset($_SESSION['login']); // Clear the session message after displaying it
@@ -22,46 +21,50 @@ include('includes/header.php');
             <?php 
             $per_page = 2;
             $page = isset($_GET['page']) ? $_GET['page'] : 1;
-            $page_1 = ($page == 1) ? 0 : ($page * $per_page) - $per_page;
-            
-            // Query to count posts based on login status
-            if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) {
-                // Show published and draft posts to logged-in users
-                $POST_query_count = "SELECT * FROM posts WHERE post_status IN ('published', 'draft')";
-                $query = "SELECT * FROM posts WHERE post_status IN ('published', 'draft') LIMIT $page_1, $per_page";
+            $page_1 = ($page == "" || $page == 1) ? 0 : ($page * $per_page) - $per_page;
+
+            // Determine if the user is an admin
+            $is_admin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin';
+
+            // Adjust query based on the user's role
+            if ($is_admin) {
+                // Admins see all posts including drafts
+                $POST_query_count = "SELECT * FROM posts";
+                $query = "SELECT * FROM posts LIMIT $page_1, $per_page";
             } else {
-                // Show only published posts to visitors
+                // Regular users only see published posts
                 $POST_query_count = "SELECT * FROM posts WHERE post_status = 'published'";
                 $query = "SELECT * FROM posts WHERE post_status = 'published' LIMIT $page_1, $per_page";
             }
-            
+
+            // Count the total number of posts
             $find_count = mysqli_query($connection, $POST_query_count);  
             $count = mysqli_num_rows($find_count);
             $count = ceil($count / $per_page);
 
+            // Execute the query to fetch posts
             $select_all_posts = mysqli_query($connection, $query);
             if (!$select_all_posts) {
                 die('Query failed: ' . mysqli_error($connection));
             }
 
-            $has_published_posts = false; // Flag to check if there are posts to display
+            $has_posts = false; // Flag to check if there are posts to display
 
-            // Loop through posts
-            while ($all_posts = mysqli_fetch_assoc($select_all_posts)): 
-                // Check post status and user login status
-                if ($all_posts['post_status'] == 'published' || 
-                    ($all_posts['post_status'] == 'draft' && isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true)) {
-                    $has_published_posts = true; // Set the flag if there's at least one post to show
-            ?>
+            // Loop through the posts
+            while ($all_posts = mysqli_fetch_assoc($select_all_posts)) {
+                // Check post status based on the user's role
+                if ($all_posts['post_status'] == 'published' || $is_admin) {
+                    $has_posts = true; // Set the flag if there's at least one post to show
+                    ?>
                     <!-- HOME CARDS IN TEMPLATE PARTS -->
                     <?php include 'includes/template-parts/card-home.php'; ?>
                     <!-- HOME CARDS -->
-            <?php 
+                    <?php
                 }
-            endwhile;
+            }
 
             // Display message if no posts are found
-            if (!$has_published_posts) {
+            if (!$has_posts && !$is_admin) {
                 echo '<h1 class="text-center">Sorry, No Posts Available</h1>';
             }
             ?>
@@ -73,7 +76,6 @@ include('includes/header.php');
     <!-- /.row -->
 
     <hr>
-    <!-- Pagination Links -->
     <ul class="pager">
         <?php 
         for ($i = 1; $i <= $count; $i++) {
