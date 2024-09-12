@@ -19,6 +19,7 @@ include '../header.php' ;
                 <tr>
                     <th>ID</th>
                     <th>Category Name</th>
+                    <th colspan="2" class="text-center">Actions</th>
 
                 </tr>
                 <!-- INSERT CATEGORIES -->

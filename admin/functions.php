@@ -56,15 +56,19 @@ while($all_categories = mysqli_fetch_assoc($select_all_categories)) : ?>
 <tr>
     <td><?php echo $all_categories['cat_id']; ?></td>
     <td><?php echo $all_categories['cat_title']; ?></td>
+    <td style="display: flex; justify-content: center; gap: 10px;">
+    <a class="d-inline btn btn-success" href="<?php echo BASE_URL; ?>/admin/categories/add.php"> Add</a>
+    <a  class="d-inline btn btn-primary" href="edit.php?edit=<?php echo $all_categories['cat_id'];?>"> Update </a>
     <?php 
      if(isset($_SESSION['user_role'])  ){
         if($_SESSION['user_role'] == 'Admin' ){ 
     ?>
     <form method="post" onsubmit="return confirmDeletion()">
         <input type="hidden" name="cat_id" value="<?php echo htmlspecialchars($all_categories['cat_id']); ?>">
-        <td>
-            <input type="submit" name="delete" value="Delete" class="btn btn-danger">
-        </td>
+       
+            <input  type="submit" name="delete" value="Delete" class=" d-block btn btn-danger">
+        
+
     </form>
     <script>
     // JavaScript function to confirm deletion
@@ -73,8 +77,8 @@ while($all_categories = mysqli_fetch_assoc($select_all_categories)) : ?>
     }
     </script>
 
-    <td>
-        <a class="btn btn-primary" href="edit.php?edit=<?php echo $all_categories['cat_id'];?>"> Update </a>
+
+       
     </td>
     <?php } } ?>
 </tr>
@@ -92,9 +96,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
         echo "<p class='text-danger'>Field must not be empty</p>";
     }
     else{
-   
-    $query = "INSERT INTO category(cat_title) VALUES('$cat_title')";
-    $result = mysqli_query($connection , $query);
+     // Prepare the INSERT statement
+        $stmt = mysqli_prepare($connection,"INSERT INTO category(cat_title) VALUES(?)");
+
+      // Check if the statement was prepared successfully
+            if ($stmt) {
+        mysqli_stmt_bind_param($stmt, 's', $cat_title);
+        $result =  mysqli_stmt_execute($stmt);
 
     if(!$result){
         die('query failed' . mysqli_error($connection));
@@ -102,12 +110,17 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
     else{
         echo "<script> alert('Category Added'); </script>";
         header("Location: show.php");
+        exit(); // Stop script execution after the redirect
     }
-   
+     // Close the prepared statement
+     mysqli_stmt_close($stmt);
+   }else{
+    // Display an error if the statement couldn't be prepared
+    echo "<p class='text-danger'>Failed to prepare the statement: " . mysqli_error($connection) . "</p>";
 }
 }
 }
-
+}
 // EDIT CATEGORY
 
 function editCategory(){
@@ -120,6 +133,7 @@ if (isset($_GET['edit'])) {
     $cat_id = $_GET['edit'];
 
     // Step 2: Query the database for the category with the specified ID
+    
     $query = "SELECT * FROM category WHERE cat_id = $cat_id";
     $result = mysqli_query($connection, $query);
 
@@ -135,21 +149,35 @@ if (isset($_GET['edit'])) {
 
 // Step 3: Handle the form submission to update the category
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
-    $cat_title = $_POST['cat_title'];
+    $cat_title = trim($_POST['cat_title']); // Escape user input to prevent SQL injection
     if($cat_title == "" || empty($cat_title)){
         echo "<p class='text-danger'>Field must not be empty</p>";
     }
     else{
-   
-     $query = "UPDATE category SET cat_title = '$cat_title' WHERE cat_id = $cat_id";
-    $result = mysqli_query($connection , $query);
+       // Prepare the UPDATE statement
+      $stmt = mysqli_prepare($connection,"UPDATE category SET cat_title = ? WHERE cat_id = ?");
+      // Check if the statement was prepared successfully
+      if($stmt){
+        // Bind the parameters to the statement
+        mysqli_stmt_bind_param($stmt, 'si', $cat_title, $cat_id);
+        // Execute the statement
+        $result =  mysqli_stmt_execute($stmt);
+        // Check if the update was successful
+        if(!$result){
+            die('query failed' . mysqli_error($connection));
+        }
+        // Redirect to the show.php page
+        else {
+            echo "<script>alert('Category Updated');</script>";
+                    header("Location: show.php");
+                    exit();
+        }
+        mysqli_stmt_close($stmt); // Close the statement
 
-    if (!$result) {
-        die('Query failed: ' . mysqli_error($connection));
-    } else {
-        echo "<p class='text-success'>Category updated successfully</p>";
-    }
-   
+      }else{
+        // Display an error if the statement couldn't be prepared
+        echo "<p class='text-danger'>Failed to prepare the statement: " . mysqli_error($connection) . "</p>";
+      }
 }
 }
 
@@ -772,7 +800,7 @@ while($all_users = mysqli_fetch_assoc($select_all_users)) : ?>
         return confirm("Are you sure you want to delete this user?");
     }
     </script>
-     <!-- delete user -->
+    <!-- delete user -->
     <td>
         <a class="btn btn-success" href="edit.php?edit=<?php echo $all_users['user_id'];?>"> Edit </a>
     </td>

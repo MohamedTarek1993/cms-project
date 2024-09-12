@@ -1,0 +1,12 @@
+RewriteEngine On
+RewriteBase /cms-project/
+
+# Prevent specific PHP files from being rewritten
+RewriteRule ^(index|register|contact|search)\.php$ - [NC,L]
+
+# Other rewrite rules
+RewriteRule ^post/(.*)$ post.php?post_id=$1 [L]
+RewriteRule ^author/(.*)$ author.php?post_author=$1 [L]
+
+# Optional: Catch-all for undefined routes
+RewriteRule ^(.*)$ 404.php [L]

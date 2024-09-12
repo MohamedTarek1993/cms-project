@@ -62,7 +62,7 @@ if (session_status() === PHP_SESSION_NONE) {
                 <ul class="nav navbar-nav">
 
                     <li>
-                        <a href="contact.php">Contact</a>
+                        <a href="contact">Contact</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
