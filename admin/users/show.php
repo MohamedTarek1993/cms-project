@@ -14,8 +14,8 @@ include '../header.php' ;
             <small> Show Users</small>
         </h1>
 
-        <div style="border colapse  overflow-x: auto;">
-            <table id="myTable">
+        <div class="table-responsive" style="border colapse overflow: auto !important">
+            <table class="table w-100 table-hover" id="myTable">
                 <tr>
                     <th>ID</th>
                     <th>UserName</th>

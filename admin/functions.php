@@ -16,25 +16,41 @@ if(!$select_all_categories){
    
 //DELETE CATEGORY 
 
-if(isset($_GET['delete'])){
+// Check if delete request is made
+if (isset($_POST['delete'])) {
 
-    if(isset($_SESSION['user_role'])  ){
-       if($_SESSION['user_role'] == 'Admin' ){ 
-  
+    // Check if user role is set and user is an Admin
+    if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-    $the_cat_id = mysqli_real_escape_string($connection, $_GET['delete']);
-    $query_delete = "DELETE FROM category WHERE cat_id = $the_cat_id";
-    $result = mysqli_query($connection , $query_delete);
-    if(!$result){
-        die('query failed' . mysqli_error($connection));
-    }
-    else{
-        echo '<script>alert("Category Deleted")</script>' ;
+        // Retrieve and sanitize the category ID
+        $the_cat_id = mysqli_real_escape_string($connection, $_POST['cat_id']);
+
+        // Check if category ID is valid
+        if (is_numeric($the_cat_id)) {
+
+            // Use prepared statement to safely delete category
+            $query_delete = "DELETE FROM category WHERE cat_id = ?";
+            $stmt = mysqli_prepare($connection, $query_delete);
+            mysqli_stmt_bind_param($stmt, 'i', $the_cat_id);
+            $result = mysqli_stmt_execute($stmt);
+
+            // Check if the deletion was successful
+            if (!$result) {
+                die('Query failed: ' . mysqli_error($connection));
+            } else {
+                echo '<script>alert("Category Deleted")</script>';
+                header("Location: show.php");
+                exit();
+            }
+
+            // Close the statement
+            mysqli_stmt_close($stmt);
+        } else {
+            echo '<script>alert("Invalid category ID")</script>';
+        }
     }
 }
-    }
-    
-}
+
 
 while($all_categories = mysqli_fetch_assoc($select_all_categories)) : ?>
 <tr>
@@ -44,10 +60,21 @@ while($all_categories = mysqli_fetch_assoc($select_all_categories)) : ?>
      if(isset($_SESSION['user_role'])  ){
         if($_SESSION['user_role'] == 'Admin' ){ 
     ?>
-    <td><a href="show.php?delete=<?php echo $all_categories['cat_id']; ?>" class="btn btn-danger">Delete
-    </td>
+    <form method="post" onsubmit="return confirmDeletion()">
+        <input type="hidden" name="cat_id" value="<?php echo htmlspecialchars($all_categories['cat_id']); ?>">
+        <td>
+            <input type="submit" name="delete" value="Delete" class="btn btn-danger">
+        </td>
+    </form>
+    <script>
+    // JavaScript function to confirm deletion
+    function confirmDeletion() {
+        return confirm("Are you sure you want to delete this category?");
+    }
+    </script>
+
     <td>
-        <a href="edit.php?edit=<?php echo $all_categories['cat_id'];?>"> Update </a>
+        <a class="btn btn-primary" href="edit.php?edit=<?php echo $all_categories['cat_id'];?>"> Update </a>
     </td>
     <?php } } ?>
 </tr>
@@ -71,6 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
 
     if(!$result){
         die('query failed' . mysqli_error($connection));
+    }
+    else{
+        echo "<script> alert('Category Added'); </script>";
+        header("Location: show.php");
     }
    
 }
@@ -152,27 +183,43 @@ if(!$select_all_posts){
 
 
 //DELETE POST 
+// Check if delete request is made
+if (isset($_POST['delete'])) {
 
-            if(isset($_GET['delete'])){
-                if(isset($_SESSION['user_role'])  ){
-                    if($_SESSION['user_role'] == 'Admin' ){
-    $the_post_id = mysqli_real_escape_string($connection, $_GET['delete']);
-    $query_delete = "DELETE FROM posts WHERE post_id = $the_post_id";
-    $result = mysqli_query($connection , $query_delete);
-    if(!$result){
-        die('query failed' . mysqli_error($connection));
+    // Check if user role is set and user is an Admin
+    if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+
+        // Retrieve and sanitize the category ID
+        $the_post_id = mysqli_real_escape_string($connection, $_POST['post_id']);
+
+        // Check if category ID is valid
+        if (is_numeric($the_post_id)) {
+
+            // Use prepared statement to safely delete category
+            $query_delete = "DELETE FROM posts WHERE post_id = ?";
+            $stmt = mysqli_prepare($connection, $query_delete);
+            mysqli_stmt_bind_param($stmt, 'i', $the_post_id);
+            $result = mysqli_stmt_execute($stmt);
+
+            // Check if the deletion was successful
+            if (!$result) {
+                die('Query failed: ' . mysqli_error($connection));
+            } else {
+                echo '<script>alert("Post Deleted")</script>';
+                header("Location: show.php");
+                exit();
+            }
+
+            // Close the statement
+            mysqli_stmt_close($stmt);
+        } else {
+            echo '<script>alert("Invalid Post ID")</script>';
+        }
     }
-    else{
-        echo "<script>
-        confirm('Post deleted');
-        window.location.href = 'show.php'; // Use JavaScript for redirection
-      </script>";
-        exit();
-       
-    }
-       }
-      }
 }
+
+
+
 while($all_posts = mysqli_fetch_assoc($select_all_posts)) : ?>
 <tr>
     <td><?php echo $all_posts['post_id']; ?></td>
@@ -221,10 +268,23 @@ if ($result) {
     <?php
     if(isset($_SESSION['user_role'])  ):
         if($_SESSION['user_role'] == 'Admin' ): ?>
-    <td><a href="show.php?delete=<?php echo $all_posts['post_id']; ?>" class="btn btn-danger">Delete
-    </td>
+    <!-- delete post form -->
+    <form method="post" onsubmit="return confirmDeletion()">
+        <input type="hidden" name="post_id" value="<?php echo htmlspecialchars($all_posts['post_id']); ?>">
+        <td>
+            <input type="submit" name="delete" value="Delete" class="btn btn-danger">
+        </td>
+    </form>
+    <script>
+    // JavaScript function to confirm deletion
+    function confirmDeletion() {
+        return confirm("Are you sure you want to delete this post?");
+    }
+    </script>
+    <!-- delete post form -->
+
     <td>
-        <a href="edit.php?edit=<?php echo $all_posts['post_id'];?>"> Update </a>
+        <a class="btn btn-primary" href="edit.php?edit=<?php echo $all_posts['post_id'];?>"> Update </a>
     </td>
     <?php endif; endif; ?>
 </tr>
@@ -605,6 +665,7 @@ if(isset($_GET['approve'])){
     else{
         header("Location: show.php");
         echo '<script>alert("comment approved")</script>' ;
+        exit();
     }
 }
 // update comment status  to unapproved
@@ -619,6 +680,7 @@ if(isset($_GET['unapprove'])){
     else{
         header("Location: show.php");
         echo '<script>alert("comment unapproved")</script>' ;
+        exit();
     }
 }
 ob_end_flush() ;
@@ -650,20 +712,38 @@ if(!$select_all_users){
 
    
 //DELETE user 
+// Check if the delete request is made
+if (isset($_POST['delete'])) {
 
-if(isset($_GET['delete'])){
+    // Check if the user role is set and the user is an Admin
+    if (isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-    $user_id = $_GET['delete'];
-    $query_delete = "DELETE FROM users WHERE user_id = $user_id";
-    $result = mysqli_query($connection , $query_delete);
-    if(!$result){
-        die('query failed' . mysqli_error($connection));
+        // Retrieve and sanitize the category ID
+        $the_user_id = mysqli_real_escape_string($connection, $_POST['user_id']);
+
+        // Check if category ID is valid
+        if (is_numeric($the_user_id)) {
+
+            // Use prepared statement to safely delete category
+            $query_delete = "DELETE FROM users WHERE user_id = ?";
+            $stmt = mysqli_prepare($connection, $query_delete);
+            mysqli_stmt_bind_param($stmt, 'i', $the_user_id);
+            $result = mysqli_stmt_execute($stmt);
+
+            // Check if the deletion was successful
+            if (!$result) {
+                die('Query failed: ' . mysqli_error($connection));
+            } else {
+                echo '<script>alert("User Deleted"); window.location.href="show.php";</script>';
+                exit(); // Stop further script execution
+            }
+
+            // Close the statement
+            mysqli_stmt_close($stmt);
+        } else {
+            echo '<script>alert("Invalid category ID")</script>';
+        }
     }
-    else{
-        header("Location: show.php");
-        echo '<script>alert("User Deleted")</script>' ;
-    }
-    
 }
 
 while($all_users = mysqli_fetch_assoc($select_all_users)) : ?>
@@ -679,10 +759,22 @@ while($all_users = mysqli_fetch_assoc($select_all_users)) : ?>
             src="../..//images/<?= $all_users['user_image'] ?>" alt="" />
     </td>
     <td><?php echo $all_users['user_role']; ?></td>
-    <td><a href="show.php?delete=<?php echo $all_users['user_id']; ?>" class="btn btn-danger">Delete
-    </td>
+    <!-- delete user -->
+    <form method="post" onsubmit="return confirmDeletion();">
+        <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($all_users['user_id']); ?>">
+        <td>
+            <input type="submit" name="delete" value="Delete" class="btn btn-danger">
+        </td>
+    </form>
+    <script>
+    // JavaScript function to confirm deletion
+    function confirmDeletion() {
+        return confirm("Are you sure you want to delete this user?");
+    }
+    </script>
+     <!-- delete user -->
     <td>
-        <a href="edit.php?edit=<?php echo $all_users['user_id'];?>"> Update </a>
+        <a class="btn btn-success" href="edit.php?edit=<?php echo $all_users['user_id'];?>"> Edit </a>
     </td>
 </tr>
 <?php endwhile; 

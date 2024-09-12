@@ -8,10 +8,27 @@ include('includes/header.php') ;
     $username = $_POST['username'];
     $email = $_POST['email'];
     $password = $_POST['password'];
+ 
+    // Validation of fields
+
   if(empty($username) || empty($email) || empty($password)){
     echo "  
     <script> alert('Field must not be empty'); </script>";
-  }else{
+  }
+  // Check if the username is at least 4 characters
+  elseif(strlen($username) < 4){
+    echo "<script> alert('Username must be at least 4 characters'); </script>";
+  }
+  // Check if the email is valid
+  elseif(filter_var($email, FILTER_VALIDATE_EMAIL) === false){
+    echo "<script> alert('Email must be valid'); </script>";
+  }
+  // Check if the password is at least 6 characters
+  elseif(strlen($password) < 6){
+    echo "<script> alert('Password must be at least 6 characters'); </script>";
+  }
+  
+  else{
     $username = mysqli_real_escape_string($connection, $username);
     $email = mysqli_real_escape_string($connection, $email);
     $password = mysqli_real_escape_string($connection, $password);
@@ -54,12 +71,14 @@ include('includes/header.php') ;
                             <div class="form-group">
                                 <label for="username" class="sr-only">username</label>
                                 <input type="text" name="username" id="username" class="form-control"
-                                    placeholder="Enter Desired Username">
+                                    placeholder="Enter Desired Username" value="<?= isset($username) ? $username : '' ?>">
                             </div>
                             <div class="form-group">
                                 <label for="email" class="sr-only">Email</label>
                                 <input type="email" name="email" id="email" class="form-control"
-                                    placeholder="somebody@example.com">
+                                    placeholder="somebody@example.com"
+                                    value="<?= isset($email) ? $email : '' ?>"
+                                    >
                             </div>
                             <div class="form-group">
                                 <label for="password" class="sr-only">Password</label>

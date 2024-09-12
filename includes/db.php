@@ -1,6 +1,5 @@
+<?php ob_start(); ?>
 <?php 
-
-
 // cheching if db is connected succfully
 
 $db['db_host'] = 'localhost';

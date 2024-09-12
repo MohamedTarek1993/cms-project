@@ -1,6 +1,5 @@
+<?php ob_start(); ?>
 <?php
-
-
 session_start();
 
 $_SESSION['user_name'] = null;
