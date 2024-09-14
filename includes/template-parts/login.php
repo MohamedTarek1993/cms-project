@@ -22,6 +22,9 @@ define('BASE_URL', '/cms-project');
             </button>
         </span>
     </div>
-
-    <span class="pull-right"><a href="<?php echo BASE_URL ;  ?>/register.php"> Register Now</a></span>
+    <div class="input-group" style="margin: 20px 0 ;">
+    <span class="pull-right"><a class="btn btn-info"  href="<?php echo BASE_URL ;  ?>/forget.php?token=<?php echo uniqid(true) ; ?>"> Forget Password</a></span>
+    <span class="pull-left"><a class="btn btn-success" href="<?php echo BASE_URL ;  ?>/register.php"> Register Now</a></span>
+    </div>
+    
 </form>

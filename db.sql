@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 03, 2024 at 04:13 PM
+-- Generation Time: Sep 14, 2024 at 08:45 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -98,7 +98,7 @@ CREATE TABLE `posts` (
 --
 
 INSERT INTO `posts` (`post_id`, `post_cat_id`, `post_title`, `post_author`, `post_user`, `post_date`, `post_image`, `post_content`, `post_tags`, `post_comment_count`, `post_status`, `post_views_count`) VALUES
-(8, 3, 'Dolorem quod veritat', 'Awab', '', '2024-09-02', 'Ellipse 1 (4).png', '<span style=\"font-family: &quot;Comic Sans MS&quot;;\">Duis anim cupidatat .</span>', 'post1 , post2', 0, 'published', 0),
+(8, 3, 'Dolorem quod veritat', 'Awab', '', '2024-09-11', 'Ellipse 1 (4).png', '    <span style=\"font-family: \"Comic Sans MS\";\">Duis anim cupidatat .</span>', 'post1 , post2', 0, 'draft', 0),
 (9, 11, 'post 2', 'ADMIN123', '', '2024-09-02', 'Group 1171276232 (1).png', '<span style=\"color: rgb(248, 248, 242); font-family: Consolas, Monaco, &quot;Andale Mono&quot;, &quot;Ubuntu Mono&quot;, monospace; white-space: pre; background-color: rgb(39, 40, 34);\"><span style=\"font-family: &quot;Comic Sans MS&quot;;\">Lorem ipsum dolor sit</span><span style=\"font-family: &quot;Comic Sans MS&quot;;\"> </span><span style=\"font-family: &quot;Comic Sans MS&quot;;\">amet consectetur adipisicing elit. Maxime mollitia,\r\n</span>molestiae quas vel sint commodi</span>', 'post1 , post2', 0, 'published', 0),
 (10, 14, 'post 3', 'lyhaci', '', '2024-09-02', 'Rectangle 4 (1).png', '    <p><font face=\"Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace\" color=\"#000000\"><span style=\"white-space: pre; font-family: Impact; background-color: rgb(206, 198, 206);\">repudiandae consequuntur voluptatum laborum</span></font></p><p><font face=\"Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace\" color=\"#000000\"><span style=\"white-space: pre; font-family: Impact; background-color: rgb(206, 198, 206);\">numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium</span></font></p><p><font face=\"Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace\" color=\"#000000\"><span style=\"white-space: pre; font-family: Impact; background-color: rgb(206, 198, 206);\">optio, eaque rerum! Provident similique accusantium nemo autem. Veritatis</span></font></p><p><font face=\"Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace\" color=\"#000000\"><span style=\"white-space: pre; font-family: Impact; background-color: rgb(206, 198, 206);\">obcaecati tenetur iure eius earum ut molestias architecto voluptate aliquam</span></font></p><p><font face=\"Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace\" color=\"#000000\"><span style=\"white-space: pre; font-family: Impact; background-color: rgb(206, 198, 206);\">nihil, eveniet aliquid culpa officia aut! Impedit sit sunt quaerat, odit,</span></font></p><p><font face=\"Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace\" color=\"#000000\"><span style=\"white-space: pre; font-family: Impact; background-color: rgb(206, 198, 206);\">tenetur error, harum nesciunt ipsum debitis quas aliquid. Reprehenderit,</span></font></p><p><font face=\"Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace\" color=\"#000000\"><span style=\"white-space: pre; font-family: Impact; background-color: rgb(206, 198, 206);\">quia. Quo neque error repudiandae fuga? Ipsa laudantium molestias eos </span></font></p>', 'post1 , post2 , post3', 0, 'published', 0);
 
@@ -116,18 +116,19 @@ CREATE TABLE `users` (
   `user_lastname` varchar(225) NOT NULL,
   `user_email` varchar(225) NOT NULL,
   `user_image` text NOT NULL,
-  `user_role` varchar(225) NOT NULL
+  `user_role` varchar(225) NOT NULL,
+  `token` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `user_name`, `user_password`, `user_firstname`, `user_lastname`, `user_email`, `user_image`, `user_role`) VALUES
-(1, 'Awab', '123', 'Awab', 'Mohammed', 'awab@gmail.com', 'WhatsApp Image 2024-08-28 at 9.54.41 PM.jpeg', 'Admin'),
-(5, 'lyhaci', 'Pa$$w0rd!', 'Erich', 'Roth', 'maxuweci@mailinator.com', 'logo-png-1024x436.png', 'Admin'),
-(38, 'ADMIN123', '$2y$10$65nYkSCUsW9CoVzK7SYfJe396', 'mohammed nasr', 'nasr', 'ADMIN123@gmail.com', 'Ellipse 1.png', 'Admin'),
-(39, 'admin2', '$2y$12$t1ru6SGIvUMQlqm6yxKF5OWJN', '', '', 'admin2@gmail.com', '', 'subscriber');
+INSERT INTO `users` (`user_id`, `user_name`, `user_password`, `user_firstname`, `user_lastname`, `user_email`, `user_image`, `user_role`, `token`) VALUES
+(1, 'Awab', '123', 'Awab', 'Mohammed', 'awab@gmail.com', 'WhatsApp Image 2024-08-28 at 9.54.41 PM.jpeg', 'Admin', '166e499d50e3ff'),
+(5, 'lyhaci', 'Pa$$w0rd!', 'Erich', 'Roth', 'maxuweci@mailinator.com', 'logo-png-1024x436.png', 'Admin', ''),
+(38, 'ADMIN123', '$2y$10$65nYkSCUsW9CoVzK7SYfJe396', 'mohammed nasr', 'nasr', 'ADMIN123@gmail.com', 'Ellipse 1.png', 'Admin', '166e499d50e3ff'),
+(39, 'admin2', '$2y$12$t1ru6SGIvUMQlqm6yxKF5OWJN', '', '', 'admin2@gmail.com', '', 'subscriber', '');
 
 -- --------------------------------------------------------
 
@@ -160,7 +161,9 @@ INSERT INTO `users_online` (`id`, `session`, `time`) VALUES
 (18, '$session', 0),
 (19, '$session', 0),
 (20, '', 1725361188),
-(21, 'r31v3a72idapmj4sjuo8es2hij', 1725369013);
+(21, 'r31v3a72idapmj4sjuo8es2hij', 1725369013),
+(22, '8p88jbiukn32483b7dehr24uk3', 1726030271),
+(23, 'mjdrjbcu8bi2209j1sq1brtf2k', 1726254964);
 
 --
 -- Indexes for dumped tables
@@ -228,7 +231,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `users_online`
 --
 ALTER TABLE `users_online`
-  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
