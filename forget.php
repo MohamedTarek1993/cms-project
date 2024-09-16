@@ -1,4 +1,16 @@
+<?php
+use PHPMailer\PHPMailer\PHPMailer;
+// use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+?>
+
 <?php  include "includes/header.php"; ?>
+
+<?php
+require 'vendor/autoload.php';
+// require 'vendor/phpmailer/phpmailer/autoload.php';
+require 'Classes/Config.php';
+?>
 
 <?php 
 // if remove token redirect to home page
@@ -38,6 +50,33 @@ if(ifItIsMethod('post')){
                         mysqli_stmt_bind_param($stmt, "ss", $token, $email);
                         mysqli_stmt_execute($stmt);
                         mysqli_stmt_close($stmt);
+
+                        /**
+                         * 
+                         * config phpmailer
+                         */
+                       $mail = new PHPMailer();
+                    //    $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      
+                        $mail->isSMTP();                                           
+                        $mail->Host       = Config::SMTP_HOST;                     
+                        $mail->Username   = Config::SMTP_USER;                     
+                        $mail->Password   = Config::SMTP_PASS;  
+                        $mail->Port       = Config::SMTP_PORT;                       
+                      $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;          
+                      $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+                      $mail->setFrom('www.mtarek789@gmail.com', 'Mailer');
+                      $mail->addAddress($email); 
+                      //Content
+                            $mail->isHTML(true);                                  //Set email format to HTML
+                            $mail->Subject = 'Reset Password';
+                            $mail->Body    = '  This for reset your password <b>in bold!</b>';
+                            $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';        
+                          if($mail->send()){
+                            echo 'Message has been sent';
+                          }   else{
+                            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                          }
+
                     }else{
                         echo mysqli_error($connection);
                     }

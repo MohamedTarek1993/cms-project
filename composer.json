@@ -1,0 +1,17 @@
+{
+    "name": "amyz/cms-project",
+    "require": {
+        "phpmailer/phpmailer": "^6.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Amyz\\CmsProject\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "MohamedTarek1993",
+            "email": "www.mtarek789@gmail.com"
+        }
+    ]
+}
