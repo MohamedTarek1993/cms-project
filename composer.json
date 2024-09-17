@@ -5,8 +5,10 @@
     },
     "autoload": {
         "psr-4": {
-            "Amyz\\CmsProject\\": "src/"
+            "Amyz\\CmsProject\\": "src/" ,
+            "": "Classes/" 
         }
+      
     },
     "authors": [
         {

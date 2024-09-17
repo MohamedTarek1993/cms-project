@@ -19,7 +19,7 @@
      <div class="well">
         <h4>Login Search</h4>
        
-       <?php include 'template-parts/login.php'; ?>
+       <?php include 'login.php'; ?>
         
         <!-- /.input-group -->
     </div>

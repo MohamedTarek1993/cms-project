@@ -122,3 +122,4 @@ while($comment_post = mysqli_fetch_assoc($select_all_comments)) : ?>
 </div>
 <?php endwhile; 
 }
+

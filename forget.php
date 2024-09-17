@@ -7,21 +7,24 @@ use PHPMailer\PHPMailer\Exception;
 <?php  include "includes/header.php"; ?>
 
 <?php
-require 'vendor/autoload.php';
+require './vendor/autoload.php';
 // require 'vendor/phpmailer/phpmailer/autoload.php';
-require 'Classes/Config.php';
+// require 'Classes/Config.php';
 ?>
 
 <?php 
 // if remove token redirect to home page
 if (!isset($_GET['token'])) {
-    header("Location: index.php");
+    header("Location: 404.php");
    exit() ;
 }
 
 if(ifItIsMethod('post')){
     if(isset($_POST['email'] )){
         $email = trim($_POST['email']);
+        $length = 50;
+
+        $token = bin2hex(openssl_random_pseudo_bytes($length));
         // check if email is empery
         if(empty($email)){
             echo "<script> alert('Please Enter Email'); </script>";
@@ -55,24 +58,30 @@ if(ifItIsMethod('post')){
                          * 
                          * config phpmailer
                          */
-                       $mail = new PHPMailer();
-                    //    $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      
-                        $mail->isSMTP();                                           
-                        $mail->Host       = Config::SMTP_HOST;                     
-                        $mail->Username   = Config::SMTP_USER;                     
-                        $mail->Password   = Config::SMTP_PASS;  
-                        $mail->Port       = Config::SMTP_PORT;                       
-                      $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;          
-                      $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-                      $mail->setFrom('www.mtarek789@gmail.com', 'Mailer');
-                      $mail->addAddress($email); 
-                      //Content
-                            $mail->isHTML(true);                                  //Set email format to HTML
-                            $mail->Subject = 'Reset Password';
-                            $mail->Body    = '  This for reset your password <b>in bold!</b>';
-                            $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';        
+
+                         $mail = new PHPMailer();
+
+                         $mail->isSMTP();
+                         $mail->Host = Config::SMTP_HOST;
+                         $mail->Username = Config::SMTP_USER;
+                         $mail->Password = Config::SMTP_PASSWORD;
+                         $mail->Port = Config::SMTP_PORT;
+                         $mail->SMTPSecure = 'tls';
+                         $mail->SMTPAuth = true;
+                         $mail->isHTML(true);
+                         $mail->CharSet = 'UTF-8';
+     
+                         $mail->setFrom('moh.tarek.dev@gmail.com', 'Mohammed Tarek');
+                         $mail->addAddress($email);
+     
+                         $mail->Subject = 'Reset Your Password';
+                         $mail->Body = '<strong> Please Click on the link below to reset your password </strong>
+                         <br/>
+                         <a href="http://localhost/cms-project/reset.php?email=' . $email . '&token=' . $token . '">Click Here</a>
+                         '; 
+                       
                           if($mail->send()){
-                            echo 'Message has been sent';
+                            echo '<script> alert("Check Your Email") </script>';
                           }   else{
                             echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
                           }
@@ -125,7 +134,8 @@ if(ifItIsMethod('post')){
                                             value="Reset Password" type="submit">
                                     </div>
 
-                                    <input type="hidden" class="hide" name="token" id="token" value="">
+                                    <input type="hidden" class="hide" name="token" id="token"
+                                        value="<?php echo $_GET['token']; ?>">
                                 </form>
 
                             </div><!-- Body-->

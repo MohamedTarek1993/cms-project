@@ -1,10 +1,16 @@
 <?php 
+
 include 'includes/db.php';
 include 'includes/functions.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 } 
+  define('BASE_URL', '/cms-project');
+  ob_start();
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,7 +81,7 @@ if (session_status() === PHP_SESSION_NONE) {
                                     href="categories.php?post_category_id=<?php echo $all_categories['cat_id']; ?>"><?php echo $all_categories['cat_title']; ?></a>
                             </li>
                             <?php endwhile ; ?>
-                           
+
                         </ul>
                     </li>
                     <?php   while($all_categories = mysqli_fetch_assoc($select_all_categories)): ?>
