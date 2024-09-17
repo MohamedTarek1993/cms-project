@@ -123,3 +123,12 @@ while($comment_post = mysqli_fetch_assoc($select_all_comments)) : ?>
 <?php endwhile; 
 }
 
+
+// placeholder image function
+function placeholder($image =''){
+if(empty($image)){
+    return 'http://placehold.it/400x400';
+}else{
+    return $image;
+}
+} 

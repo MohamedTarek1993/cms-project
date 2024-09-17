@@ -53,11 +53,11 @@ if (isset($all_posts['post_cat_id']) && !empty($all_posts['post_cat_id'])) {
     if ($select_category_name && $category_list = mysqli_fetch_assoc($select_category_name)) {
         // Display the category link and title
         ?>
-        <a href="categories.php?post_category_id=<?= htmlspecialchars($all_posts['post_cat_id']); ?>">
-            <span class="glyphicon glyphicon-time"></span> 
-            Category: <?= htmlspecialchars($category_list['cat_title']); ?>
-        </a>
-        <?php
+<a href="categories.php?post_category_id=<?= htmlspecialchars($all_posts['post_cat_id']); ?>">
+    <span class="glyphicon glyphicon-time"></span>
+    Category: <?= htmlspecialchars($category_list['cat_title']); ?>
+</a>
+<?php
     } else {
         // Display "Uncategorized" if the category is not found
         echo 'Uncategorized';
@@ -75,7 +75,7 @@ if (isset($all_posts['post_cat_id']) && !empty($all_posts['post_cat_id'])) {
 
 <div class="image-wrap">
     <a href="<?php echo 'post.php?post_id=' . $all_posts['post_id'] ; ?>">
-        <img class="img-responsive" src="images/<?= $all_posts['post_image'] ?>" alt="">
+        <img class="img-responsive" src="images/<?= placeholder($all_posts['post_image']) ?>" alt="">
     </a>
 </div>
 <hr>

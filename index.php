@@ -2,6 +2,26 @@
 include('includes/header.php'); 
 ?>
 
+<?php
+  require __DIR__ . '/vendor/autoload.php';
+
+  $options = array(
+    'cluster' => 'eu',
+    'useTLS' => true
+  );
+  $pusher = new Pusher\Pusher(
+    '466cb157af6ba7eca4b8',
+    'a0e491493cddb61e7d30',
+    '1866562',
+    $options
+  );
+
+  $data['message'] = 'بحبك يالاء';
+  $pusher->trigger('my-channel', 'my-event', $data);
+?>
+
+
+
 <!-- Page Content -->
 <div class="container">
     <div class="row">
@@ -56,10 +76,10 @@ include('includes/header.php');
                 if ($all_posts['post_status'] == 'published' || $is_admin) {
                     $has_posts = true; // Set the flag if there's at least one post to show
                     ?>
-                    <!-- HOME CARDS IN TEMPLATE PARTS -->
-                    <?php include 'includes/template-parts/card-home.php'; ?>
-                    <!-- HOME CARDS -->
-                    <?php
+            <!-- HOME CARDS IN TEMPLATE PARTS -->
+            <?php include 'includes/template-parts/card-home.php'; ?>
+            <!-- HOME CARDS -->
+            <?php
                 }
             }
 

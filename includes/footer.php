@@ -21,6 +21,8 @@
 <!-- Bootstrap Core JavaScript -->
 <script src="js/bootstrap.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"> </script>
+
 <script>
 // Get all nav links
 const navLinks = document.querySelectorAll('.nav-link, .dropdown-item, .nav > li > a');
