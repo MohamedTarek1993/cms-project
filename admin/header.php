@@ -116,10 +116,10 @@ ob_start();
             </div>
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
-                
+
                 <li>
                     <a href="#">
-                    <?php 
+                        <?php 
                     $count_user = users_online();
                     echo $count_user ; ?>
                         <i class="fa fa-fw fa-power-off"></i>
@@ -132,7 +132,13 @@ ob_start();
 
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <strong>
-                            <?php echo $_SESSION['first_name'] ;?> <?php echo $_SESSION['last_name'] ; ?> </strong>
+                            <?php
+                            //IF USER LOGGED IN AND DIDNT HAVE FIRSTNAME AND LASTNAME SHOW USERNAME
+                    echo !isset($_SESSION['user_firstname']) && !isset($_SESSION['user_lastname']) 
+                            ? $_SESSION['user_name'] 
+                            : $_SESSION['first_name'] . ' ' . $_SESSION['last_name']; 
+    ?>
+                        </strong>
                         <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>

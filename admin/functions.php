@@ -30,6 +30,16 @@ function checkIfUserIsLoggedInAndRedirect($redirectLocation=null){
 
 
 
+
+// placeholder image function
+function placeholder($image =''){
+    if(empty($image)){
+        return 'placeholder.png';
+    }else{
+        return $image;
+    }
+    } 
+
 //SHOW ALL CATEGORIES
 
 function showAllCategories(){
@@ -85,28 +95,28 @@ while($all_categories = mysqli_fetch_assoc($select_all_categories)) : ?>
     <td><?php echo $all_categories['cat_id']; ?></td>
     <td><?php echo $all_categories['cat_title']; ?></td>
     <td style="display: flex; justify-content: center; gap: 10px;">
-    <a class="d-inline btn btn-success" href="<?php echo BASE_URL; ?>/admin/categories/add.php"> Add</a>
-    <a  class="d-inline btn btn-primary" href="edit.php?edit=<?php echo $all_categories['cat_id'];?>"> Update </a>
-    <?php 
+        <a class="d-inline btn btn-success" href="<?php echo BASE_URL; ?>/admin/categories/add.php"> Add</a>
+        <a class="d-inline btn btn-primary" href="edit.php?edit=<?php echo $all_categories['cat_id'];?>"> Update </a>
+        <?php 
      if(isset($_SESSION['user_role'])  ){
         if($_SESSION['user_role'] == 'Admin' ){ 
     ?>
-    <form method="post" onsubmit="return confirmDeletion()">
-        <input type="hidden" name="cat_id" value="<?php echo htmlspecialchars($all_categories['cat_id']); ?>">
-       
-            <input  type="submit" name="delete" value="Delete" class=" d-block btn btn-danger">
-        
+        <form method="post" onsubmit="return confirmDeletion()">
+            <input type="hidden" name="cat_id" value="<?php echo htmlspecialchars($all_categories['cat_id']); ?>">
 
-    </form>
-    <script>
-    // JavaScript function to confirm deletion
-    function confirmDeletion() {
-        return confirm("Are you sure you want to delete this category?");
-    }
-    </script>
+            <input type="submit" name="delete" value="Delete" class=" d-block btn btn-danger">
 
 
-       
+        </form>
+        <script>
+        // JavaScript function to confirm deletion
+        function confirmDeletion() {
+            return confirm("Are you sure you want to delete this category?");
+        }
+        </script>
+
+
+
     </td>
     <?php } } ?>
 </tr>
@@ -301,7 +311,7 @@ while($all_posts = mysqli_fetch_assoc($select_all_posts)) : ?>
     <td><?php echo $all_posts['post_status']; ?></td>
     <td>
         <img style="width: 100px; height: 100px; object-fit: cover; " class="img-responsive"
-            src="../..//images/<?= $all_posts['post_image'] ?>" alt="" />
+            src="../..//images/<?= placeholder($all_posts['post_image'] ) ; ?>" alt="" />
     </td>
 
     <td><?php echo $all_posts['post_tags']; ?></td>
@@ -812,7 +822,8 @@ while($all_users = mysqli_fetch_assoc($select_all_users)) : ?>
     <td><?php echo $all_users['user_lastname']; ?></td>
     <td>
         <img style="width: 100px; height: 100px; object-fit: cover; " class="img-responsive"
-            src="../..//images/<?= $all_users['user_image'] ?>" alt="" />
+            src="../..//images/<?= placeholder( $all_users['user_image']) ; ?>" alt="" />
+
     </td>
     <td><?php echo $all_users['user_role']; ?></td>
     <!-- delete user -->
@@ -1036,8 +1047,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
 
     <div class="form-group">
         <label for="image">Edit User Image</label>
-        <img style="width: 100px; height: 100px; display: block;"
-            src="../../images/<?= htmlspecialchars($user_image) ?>" alt="User Image">
+        <img style="width: 100px; height: 100px; display: block;" src="../../images/<?= placeholder($user_image) ; ?>"
+            alt="User Image">
         <input type="file" class="form-control" name="user_image">
     </div>
 
@@ -1092,12 +1103,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
 function profileUser() {
     global $connection;
 
-    // Step 1: Fetch user data if the session is active
+    // Fetch user data if the session is active
     if (isset($_SESSION['user_name'])) {
         $user_name = $_SESSION['user_name'];
-        $query = "SELECT * FROM users WHERE user_name = '$user_name'";
-        $result = mysqli_query($connection, $query);
-
+        $query = "SELECT * FROM users WHERE user_name = ?";
+        $stmt = mysqli_prepare($connection, $query);
+        mysqli_stmt_bind_param($stmt, 's', $user_name);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+    
         if ($result && mysqli_num_rows($result) > 0) {
             $user = mysqli_fetch_assoc($result);
             $user_id = $user['user_id'];
@@ -1113,19 +1127,19 @@ function profileUser() {
             return;
         }
     }
-
-    // Step 3: Handle the form submission to update the user
+    
+    // Handle the form submission to update the user
     if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
         $user_id = $_POST['user_id'];
         $user_name = mysqli_real_escape_string($connection, $_POST['user_name']);
-        $user_password = mysqli_real_escape_string($connection, $_POST['user_password']);
+        $user_password = $_POST['user_password']; // Do not escape password
         $user_email = mysqli_real_escape_string($connection, $_POST['user_email']);
         $user_image = $_FILES['user_image']['name'];
         $user_image_temp = $_FILES['user_image']['tmp_name'];
         $user_firstname = mysqli_real_escape_string($connection, $_POST['user_firstname']);
         $user_lastname = mysqli_real_escape_string($connection, $_POST['user_lastname']);
-        $user_role = mysqli_real_escape_string($connection, $_POST['user_role']);
-
+// Check if user_role is set, otherwise use the existing role
+$user_role = isset($_POST['user_role']) ? mysqli_real_escape_string($connection, $_POST['user_role']) : 'subscriber';    
         // Validate form fields
         if (empty($user_name)) {
             echo "<p class='text-danger'>User Name must not be empty</p>";
@@ -1137,14 +1151,12 @@ function profileUser() {
             echo "<p class='text-danger'>User firstname must not be empty</p>";
         } elseif (empty($user_lastname)) {
             echo "<p class='text-danger'>User lastname must not be empty</p>";
-        } elseif (empty($user_role)) {
-            echo "<p class='text-danger'>User role must not be empty</p>";
-        } else {
+        }  else {
             // Handle image upload
             if (!empty($user_image_temp)) {
                 $upload_directory = "../images/";
                 $upload_file = $upload_directory . basename($user_image);
-
+    
                 if (move_uploaded_file($user_image_temp, $upload_file)) {
                     echo "<p class='text-success'>Image uploaded successfully</p>";
                 } else {
@@ -1153,37 +1165,74 @@ function profileUser() {
                 }
             } else {
                 // Fetch current image if no new image is uploaded
-                $query = "SELECT user_image FROM users WHERE user_id = $user_id";
-                $result = mysqli_query($connection, $query);
+                $query = "SELECT user_image FROM users WHERE user_id = ?";
+                $stmt = mysqli_prepare($connection, $query);
+                mysqli_stmt_bind_param($stmt, 'i', $user_id);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
                 if ($row = mysqli_fetch_assoc($result)) {
                     $user_image = $row['user_image'];
                 }
             }
-
-            // Update user details
+    
+              // Update user details
+        if (!empty($user_password)) {
+            // Hash the new password if provided
+            $hashed_password = password_hash($user_password, PASSWORD_BCRYPT, ['cost' => 12]);
             $query = "UPDATE users SET 
-                user_name = '{$user_name}', 
-                user_password = '{$user_password}', 
-                user_email = '{$user_email}', 
-                user_image = '{$user_image}', 
-                user_firstname = '{$user_firstname}', 
-                user_lastname = '{$user_lastname}', 
-                user_role = '{$user_role}' 
-                WHERE user_id = {$user_id}";
-
-            $result = mysqli_query($connection, $query);
-
-            if (!$result) {
-                die('Query failed: ' . mysqli_error($connection));
-            } else {
+                user_name = ?, 
+                user_password = ?, 
+                user_email = ?, 
+                user_image = ?, 
+                user_firstname = ?, 
+                user_lastname = ?, 
+                user_role = ? 
+                WHERE user_id = ?";
+            $stmt = mysqli_prepare($connection, $query);
+            mysqli_stmt_bind_param($stmt, 'sssssssi', 
+                $user_name, 
+                $hashed_password, 
+                $user_email, 
+                $user_image, 
+                $user_firstname, 
+                $user_lastname, 
+                $user_role, 
+                $user_id
+            );
+        } else {
+            // Keep the old password if not updated
+            $query = "UPDATE users SET 
+                user_name = ?, 
+                user_email = ?, 
+                user_image = ?, 
+                user_firstname = ?, 
+                user_lastname = ?, 
+                user_role = ? 
+                WHERE user_id = ?";
+            $stmt = mysqli_prepare($connection, $query);
+            mysqli_stmt_bind_param($stmt, 'sssssssi', 
+                $user_name, 
+                $hashed_password, 
+                $user_email, 
+                $user_image, 
+                $user_firstname, 
+                $user_lastname, 
+                $user_role, 
+                $user_id
+            );
+        }
+    
+            if (mysqli_stmt_execute($stmt)) {
                 echo "<p class='text-success'>User updated successfully</p>";
                 // Optionally redirect after a successful update
                 header("Location: profile.php"); // Adjust redirect path as needed
                 exit();
+            } else {
+                die('Query failed: ' . mysqli_error($connection));
             }
         }
     }
-
+    
     ?>
 <form action="profile.php" method="post" enctype="multipart/form-data">
     <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($user_id); ?>">
@@ -1195,7 +1244,8 @@ function profileUser() {
 
     <div class="form-group">
         <label for="password">Edit User Password</label>
-        <input type="password" class="form-control" name="user_password">
+        <input type="password" class="form-control" name="user_password"
+            value="<?= htmlspecialchars($user_password); ?>">
     </div>
 
     <div class="form-group">
@@ -1205,7 +1255,7 @@ function profileUser() {
 
     <div class="form-group">
         <label for="image">Edit User Image</label>
-        <img style="width: 100px; height: 100px; display: block;" src="../images/<?= htmlspecialchars($user_image); ?>"
+        <img style="width: 100px; height: 100px; display: block;" src="../images/<?= placeholder($user_image); ?>"
             alt="User Image">
         <input type="file" class="form-control" name="user_image">
     </div>
@@ -1219,7 +1269,8 @@ function profileUser() {
         <label for="lastname">Edit User Lastname</label>
         <input value="<?= htmlspecialchars($user_lastname); ?>" type="text" class="form-control" name="user_lastname">
     </div>
-
+    <!-- IF USER IS SUBCRIBR CANT EDIT ROLE -->
+    <?php if($user_role !== 'subscriber') { ?>
     <div class="form-group">
         <label for="role">Edit User Role</label>
         <select class="form-control" name="user_role">
@@ -1239,6 +1290,15 @@ function profileUser() {
             ?>
         </select>
     </div>
+
+    <?php } elseif($user_role === 'subscriber'){
+        echo "
+        <div class='form-group'>
+         <label for='role'> User Role</label>
+        <input  class='form-control'  disabled type='text' name='user_role' value='Subscriber'>
+        </div>
+        ";
+    } ?>
 
     <button name="submit" type="submit" class="btn btn-primary">Submit</button>
 </form>

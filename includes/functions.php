@@ -127,7 +127,7 @@ while($comment_post = mysqli_fetch_assoc($select_all_comments)) : ?>
 // placeholder image function
 function placeholder($image =''){
 if(empty($image)){
-    return 'http://placehold.it/400x400';
+    return 'placeholder.png';
 }else{
     return $image;
 }
