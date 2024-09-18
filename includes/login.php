@@ -20,6 +20,7 @@ if (isset($_POST['login'])) {
         // Verify the entered password with the hashed password from the database
         if (password_verify($user_password, $db_user_password)) {
             // Password matches, login successful
+            $_SESSION['user_id'] = $db_user_id;
             $_SESSION['user_name'] = $db_user_name;
             $_SESSION['user_role'] = $db_user_role;
             echo "<script>
@@ -59,7 +60,7 @@ if (isset($_POST['login'])) {
             <div class="row">
                 <div class="col-xs-6 col-xs-offset-3">
                     <div class="form-wrap">
-                        <h1>Login</h1>
+                        <h1><?php echo _Login; ?></h1>
 
                         <form method="post">
                             <div class="form-group">

@@ -4,6 +4,9 @@
 <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav side-nav">
         <li>
+            <a href="<?php echo BASE_URL; ?>/admin"><i class="fa fa-fw fa-dashboard"></i> My Data</a>
+        </li>
+        <li>
             <a href="<?php echo BASE_URL; ?>/admin"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
         </li>
 <!-- CHECK ROLE IF SUBSCRIBE DIDNT SHOW IN SIDEBAR -->

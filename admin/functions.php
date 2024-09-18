@@ -30,6 +30,24 @@ function checkIfUserIsLoggedInAndRedirect($redirectLocation=null){
 
 
 
+function is_admin(){
+    global $connection;
+    if(isLoggedIn()){
+        $query = "SELECT user_role FROM users WHERE user_id = '{$_SESSION['user_id']}'";
+        $select_user_query = mysqli_query($connection, $query);
+    
+        while($row = mysqli_fetch_array($select_user_query)){
+            $user_role = $row['user_role'];
+        }    
+        if($user_role == 'Admin'){
+            return true;
+        }else{
+            return false;
+        }
+    }  return false;
+    
+  
+}
 
 // placeholder image function
 function placeholder($image =''){

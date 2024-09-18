@@ -10,6 +10,21 @@ if (session_status() === PHP_SESSION_NONE) {
   ob_start();
 
 
+// language switcher
+
+if (isset($_GET['lang']) && !empty($_GET['lang'])) {
+    $_SESSION['lang'] = $_GET['lang'];
+    if(isset($_SESSION['lang']) && $_SESSION['lang'] != $_GET['lang']) {
+        echo '<script>location.reload()</script>';
+    }
+}
+    if(isset($_SESSION['lang'])) {
+        include 'includes/languages/' . $_SESSION['lang'] . '.php';
+    }else{
+        include 'includes/languages/en.php';
+    }
+
+
 
 ?>
 <!DOCTYPE html>
@@ -111,6 +126,25 @@ if (session_status() === PHP_SESSION_NONE) {
                        ?>
                         ">Login / Register</a>
                     </li>
+                    <li>
+                        <form method="get" class="form-inline my-2 my-lg-2" action="" id="language_form">
+                            <div class="form-group">
+                                <select class="form-control" onchange="changeLang(this)" name="lang">
+                                    <option <?php echo $_SESSION['lang'] == 'en' ? 'selected' : '' ?> selected
+                                        value="en"> English</option>
+                                    <option <?php echo $_SESSION['lang'] == 'ar' ? 'selected' : '' ?> value="ar">Arabic
+                                    </option>
+                                </select>
+                            </div>
+                        </form>
+                        <script>
+                        function changeLang(lang) {
+                            document.getElementById("language_form").value = lang.value;
+                            document.getElementById("language_form").submit();
+                        }
+                        </script>
+                    </li>
+
 
                 </ul>
             </div>
