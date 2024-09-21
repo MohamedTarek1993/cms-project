@@ -1,6 +1,4 @@
-<?php  
-include('includes/header.php'); 
-?>
+<?php  include('includes/header.php'); ?>
 
 <?php
   require __DIR__ . '/vendor/autoload.php';

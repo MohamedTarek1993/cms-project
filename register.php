@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['register'])) {
                                 <label for="username" class="sr-only">username</label>
                                 <input type="text" name="username" id="username" class="form-control"
                                     placeholder="Enter Desired Username"
-                                    value="<?= isset($username) ? $username : '' ?>">
+                                    value="<?php if(!empty($username)) echo $username;  ?>">
                             </div>
                             <div class="form-group">
                                 <label for="email" class="sr-only">Email</label>

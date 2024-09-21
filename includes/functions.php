@@ -1,5 +1,16 @@
 <?php 
 
+
+/**
+ * GET THE CURRENT PAGE NAME
+ * 
+ * @return string The name of the current page
+ */
+
+$current_page = basename($_SERVER['PHP_SELF'], ".php"); // Get the current PHP file name without extension
+$page_title = ucfirst($current_page); // Capitalize first letter
+
+
 /**
  * Escapes a string to be used in a SQL query, removing HTML tags and
  * trimming whitespace from the ends. This is the minimum amount of
